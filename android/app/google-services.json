@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "98979407152",
+    "project_id": "helpapp-70e6d",
+    "storage_bucket": "helpapp-70e6d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98979407152:android:4950896ce7ec2b8cf8d4f5",
+        "android_client_info": {
+          "package_name": "com.example.help_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHEBYZDKKXiwB0MvZGkoqHl_sUCCIO41A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
