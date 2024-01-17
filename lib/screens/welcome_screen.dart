@@ -1,10 +1,9 @@
+import 'package:help_app/screens/sign_in_auth.dart';
 import 'package:help_app/widgets/custom_button.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/screens/sign_in_screen.dart';
 import 'package:help_app/screens/sign_up_screen.dart';
-
-
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -50,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: WelcomButton("sign in", SignInPage(),
+                      child: WelcomButton("sign in", SignInAuth(),
                           Colors.transparent, Colors.black),
                     ),
                     Expanded(

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/screens/sign_up_screen.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,25 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
+
+  // text controllers
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  // sign in function
+  Future signInFunc() async {
+    FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim());
+  }
+
+  // dispose controller to help memory management
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +67,9 @@ class _SignInPageState extends State<SignInPage> {
                         const SizedBox(
                           height: 40,
                         ),
+                        // email textfield
                         TextFormField(
+                          controller: _emailController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "please enter email";
@@ -75,7 +97,9 @@ class _SignInPageState extends State<SignInPage> {
                         const SizedBox(
                           height: 25.0,
                         ),
+                        // password textfield
                         TextFormField(
+                          controller: _passwordController,
                           obscureText: true,
                           obscuringCharacter: '*',
                           validator: (value) {
@@ -143,28 +167,48 @@ class _SignInPageState extends State<SignInPage> {
                         const SizedBox(
                           height: 25.0,
                         ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formSignInKey.currentState!.validate() &&
-                                  rememberPassword) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Processing Data'),
-                                  ),
-                                );
-                              } else if (!rememberPassword) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Please agree to the processing of personal data')),
-                                );
-                              }
-                            },
-                            child: const Text('Sign in'),
+                        GestureDetector(
+                          onTap: signInFunc,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                color: Colors.blue,
+                                borderRadius: BorderRadius.circular(12)),
+                            child: const Center(child: Text(
+                              "sign in",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              )),
                           ),
                         ),
+                        // GestureDetector(
+                        //   onTap: signInFunc,
+                        //   child: SizedBox(
+                        //     width: double.infinity,
+                        //     child: ElevatedButton(
+                        //       onPressed: () {
+                        //         if (_formSignInKey.currentState!.validate() &&
+                        //             rememberPassword) {
+                        //           ScaffoldMessenger.of(context).showSnackBar(
+                        //             const SnackBar(
+                        //               content: Text('Processing Data'),
+                        //             ),
+                        //           );
+                        //         } else if (!rememberPassword) {
+                        //           ScaffoldMessenger.of(context).showSnackBar(
+                        //             const SnackBar(
+                        //                 content: Text(
+                        //                     'Please agree to the processing of personal data')),
+                        //           );
+                        //         }
+                        //       },
+                        //       child: const Text('Sign in'),
+                        //     ),
+                        //   ),
+                        // ),
                         const SizedBox(
                           height: 25.0,
                         ),
