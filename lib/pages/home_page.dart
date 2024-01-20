@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:help_app/pages/welcom_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,6 +24,13 @@ class _HomePageState extends State<HomePage> {
           MaterialButton(
             onPressed: () {
               FirebaseAuth.instance.signOut();
+              Navigator.push(
+                // Call the asynchronous function and wait for it to complete
+                context,
+                MaterialPageRoute(
+                  builder: (e) => const WelcomeScreen(),
+                ),
+              );
             },
             color: Colors.deepOrange,
             child: Text("sign out"),

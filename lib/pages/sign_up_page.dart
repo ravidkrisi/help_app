@@ -1,4 +1,6 @@
-import 'package:help_app/screens/sign_in_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/pages/home_page.dart';
+import 'package:help_app/pages/sign_in_page.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/theme/theme.dart';
@@ -14,6 +16,32 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
+  // create instance of firenase authenticator
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  // controllers for email and password user input
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _signUpFunc(BuildContext context) async {
+    try {
+      // sign up the user
+      await _auth.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+
+      // Redirect to home page after successful sign-up
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    }
+    // handle errors
+    catch (e) {
+      // ignore: avoid_print
+      print("error during sign up $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       // email
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
@@ -120,6 +149,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       // password
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -185,21 +215,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_formSignupKey.currentState!.validate() &&
-                                agreePersonalData) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
-                            } else if (!agreePersonalData) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Please agree to the processing of personal data')),
-                              );
-                            }
+                          onPressed: () async {
+                            await _signUpFunc(context);
                           },
                           child: const Text('Sign up'),
                         ),
@@ -265,7 +282,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           GestureDetector(
                             onTap: () {
+
                               Navigator.push(
+                                // Call the asynchronous function and wait for it to complete
                                 context,
                                 MaterialPageRoute(
                                   builder: (e) => const SignInPage(),
