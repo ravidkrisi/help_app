@@ -16,14 +16,24 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
+
   // create instance of firenase authenticator
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   // controllers for email and password user input
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  // decoration variables
+  // ignore: prefer_final_fields
+  Color _emailBorderColor = Colors.black26;
+  Color _passwordBorderColor = Colors.black26;
 
   Future<void> _signUpFunc(BuildContext context) async {
     try {
+      // reset email & password border color to black
+      _emailBorderColor = Colors.black;
+      _passwordBorderColor = Colors.black;
       // sign up the user
       await _auth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
@@ -33,8 +43,22 @@ class _SignUpPageState extends State<SignUpPage> {
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
+        // ignore: prefer_const_constructors
         MaterialPageRoute(builder: (context) => HomePage()),
       );
+    }
+    // catch invalid sign up arguments
+    on FirebaseAuthException catch (e) {
+      // invalid email address
+      if (e.code == 'invalid-email') {
+        setState(() {
+          _emailBorderColor = Colors.red;
+        });
+      } else if (e.code == 'weak-password') {
+        setState(() {
+          _passwordBorderColor = Colors.red;
+        });
+      }
     }
     // handle errors
     catch (e) {
@@ -117,28 +141,29 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       // email
                       TextFormField(
-                        controller: _emailController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Email';
-                          }
-                          return null;
+                        // set pwd text field border to black after input submited
+                        focusNode: _focusNode,
+                        onFieldSubmitted: (value) {
+                          setState(() {
+                            _emailBorderColor = Colors.black26;
+                          });
                         },
+                        controller: _emailController,
                         decoration: InputDecoration(
                           label: const Text('Email'),
                           hintText: 'Enter Email',
-                          hintStyle: const TextStyle(
-                            color: Colors.black26,
+                          hintStyle: TextStyle(
+                            color: Colors.black12,
                           ),
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                            borderSide: BorderSide(
+                              color: _emailBorderColor, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                            borderSide: BorderSide(
+                              color: _emailBorderColor, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -149,6 +174,13 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       // password
                       TextFormField(
+                        // set pwd text field border to black after input submited
+                        focusNode: _focusNode,
+                        onFieldSubmitted: (value) {
+                          setState(() {
+                            _passwordBorderColor = Colors.black26;
+                          });
+                        },
                         controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
@@ -165,14 +197,16 @@ class _SignUpPageState extends State<SignUpPage> {
                             color: Colors.black26,
                           ),
                           border: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                            borderSide: BorderSide(
+                              color:
+                                  _passwordBorderColor, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                            borderSide: BorderSide(
+                              color:
+                                  _passwordBorderColor, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -282,7 +316,6 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           GestureDetector(
                             onTap: () {
-
                               Navigator.push(
                                 // Call the asynchronous function and wait for it to complete
                                 context,

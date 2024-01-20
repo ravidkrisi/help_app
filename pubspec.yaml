@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   icons_plus: ^4.0.0
   firebase_core: ^2.24.2
+  email_validator: '^2.1.16'
   firebase_auth: ^4.16.0
 
 dev_dependencies:

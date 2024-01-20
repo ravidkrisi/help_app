@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:help_app/firebase_options.dart';
-import 'package:help_app/pages/sign_in_auth.dart';
+import 'package:help_app/pages/sign_in_route.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/pages/welcom_page.dart';
 
