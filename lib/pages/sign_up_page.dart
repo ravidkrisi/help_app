@@ -5,6 +5,7 @@ import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/theme/theme.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -23,24 +24,25 @@ class _SignUpPageState extends State<SignUpPage> {
   // controllers for email and password user input
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+
   // decoration variables
-  // ignore: prefer_final_fields
   Color _emailBorderColor = Colors.black26;
   Color _passwordBorderColor = Colors.black26;
 
+  // send user email and password to FireBase Auth
   Future<void> _signUpFunc(BuildContext context) async {
     try {
-      // reset email & password border color to black
-      _emailBorderColor = Colors.black;
-      _passwordBorderColor = Colors.black;
+      // store user data in 'users' firestore
+      addUserDataToFirestore(_nameController.text, _emailController.text);
+
       // sign up the user
       await _auth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
 
       // Redirect to home page after successful sign-up
-      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
         // ignore: prefer_const_constructors
@@ -65,6 +67,18 @@ class _SignUpPageState extends State<SignUpPage> {
       // ignore: avoid_print
       print("error during sign up $e");
     }
+  }
+
+  // send user's data to FireStore db
+  Future<void> addUserDataToFirestore(String name, String email) async {
+    // set connection to users collection
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    // create new doc of user. set unique ID
+    await users.add({
+      'name': name,
+      'email': email,
+    });
   }
 
   @override
@@ -110,6 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       // full name
                       TextFormField(
+                        controller: _nameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Full name';
