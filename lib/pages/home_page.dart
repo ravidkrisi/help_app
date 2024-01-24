@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
                 // Call the asynchronous function and wait for it to complete
                 context,
                 MaterialPageRoute(
-                  builder: (e) => const WelcomeScreen(),
+                  builder: (e) => const WelcomePage(),
                 ),
               );
             },

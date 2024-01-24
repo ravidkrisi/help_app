@@ -2,11 +2,10 @@ import 'package:help_app/pages/sign_in_route.dart';
 import 'package:help_app/widgets/custom_button.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:help_app/pages/sign_in_page.dart';
 import 'package:help_app/pages/sign_up_page.dart';
 
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key});
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

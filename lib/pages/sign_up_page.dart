@@ -21,7 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
   // create instance of firenase authenticator
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // controllers for email and password user input
+  // controllers for user input
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -161,18 +161,18 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(
                         height: 25.0,
                       ),
-
+                      // textfield for username 
                       TextFormField(
                         controller: _nicknameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter a Nickname';
+                            return 'Please enter a username';
                           }
                           return null;
                         },
                         decoration: InputDecoration(
-                          label: const Text('Nickname'),
-                          hintText: 'Enter Nickname',
+                          label: const Text('username'),
+                          hintText: 'Enter username',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
                           ),
@@ -197,7 +197,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       // email
                       TextFormField(
                         // set pwd text field border to black after input submited
-
                         onFieldSubmitted: (value) {
                           setState(() {
                             _emailBorderColor = Colors.black26;
