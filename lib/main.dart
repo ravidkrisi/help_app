@@ -4,7 +4,7 @@ import 'package:help_app/pages/sign_in_route.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/pages/welcom_page.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());

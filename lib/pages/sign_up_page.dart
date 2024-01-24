@@ -25,6 +25,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nicknameController = TextEditingController();
+  final TextEditingController _creditcardController = TextEditingController();
+
   final FocusNode _focusNode = FocusNode();
 
   // decoration variables
@@ -35,7 +38,8 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<void> _signUpFunc(BuildContext context) async {
     try {
       // store user data in 'users' firestore
-      addUserDataToFirestore(_nameController.text, _emailController.text);
+      addUserDataToFirestore(_nameController.text, _emailController.text,
+          _nicknameController.text, _creditcardController.text);
 
       // sign up the user
       await _auth.createUserWithEmailAndPassword(
@@ -70,7 +74,8 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   // send user's data to FireStore db
-  Future<void> addUserDataToFirestore(String name, String email) async {
+  Future<void> addUserDataToFirestore(
+      String name, String email, String nickname, String creditcard) async {
     // set connection to users collection
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
@@ -78,6 +83,8 @@ class _SignUpPageState extends State<SignUpPage> {
     await users.add({
       'name': name,
       'email': email,
+      'nickname': nickname,
+      'creditcard': creditcard
     });
   }
 
@@ -154,10 +161,43 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(
                         height: 25.0,
                       ),
+
+                      TextFormField(
+                        controller: _nicknameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a Nickname';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          label: const Text('Nickname'),
+                          hintText: 'Enter Nickname',
+                          hintStyle: const TextStyle(
+                            color: Colors.black26,
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.black12, // Default border color
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Colors.black12, // Default border color
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 25.0,
+                      ),
+
                       // email
                       TextFormField(
                         // set pwd text field border to black after input submited
-                        focusNode: _focusNode,
+
                         onFieldSubmitted: (value) {
                           setState(() {
                             _emailBorderColor = Colors.black26;
@@ -190,7 +230,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       // password
                       TextFormField(
                         // set pwd text field border to black after input submited
-                        focusNode: _focusNode,
+
                         onFieldSubmitted: (value) {
                           setState(() {
                             _passwordBorderColor = Colors.black26;
@@ -227,6 +267,50 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                       ),
+                      const SizedBox(
+                        height: 25.0,
+                      ),
+
+                      TextFormField(
+                        // set credit card text field border to black after input submited
+
+                        onFieldSubmitted: (value) {
+                          setState(() {
+                            _passwordBorderColor = Colors.black26;
+                          });
+                        },
+                        controller: _creditcardController,
+                        obscureText: true,
+                        obscuringCharacter: '*',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter credit card number';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          label: const Text('credit card number'),
+                          hintText: 'Enter credit card number',
+                          hintStyle: const TextStyle(
+                            color: Colors.black26,
+                          ),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color:
+                                  _passwordBorderColor, // Default border color
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color:
+                                  _passwordBorderColor, // Default border color
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+
                       const SizedBox(
                         height: 25.0,
                       ),

@@ -32,11 +32,11 @@ class WelcomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             )),
                         TextSpan(
-                            text: '\logo here? diff background?',
+                            //text: '\logo here? diff background?',
                             style: TextStyle(
-                              fontSize: 20,
-                              // height: 0,
-                            ))
+                          fontSize: 20,
+                          // height: 0,
+                        ))
                       ],
                     ),
                   ),
