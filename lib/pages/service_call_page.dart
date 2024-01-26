@@ -1,7 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ServiceCallPage extends StatefulWidget {
   const ServiceCallPage({super.key});
@@ -14,17 +15,46 @@ class ServiceCallPage extends StatefulWidget {
 
 class _ServiceCallPageState extends State<ServiceCallPage> {
   // set unique value to the form
-  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
+
+  // add form data the service_calls firestore collection
+  void _submitForm(Map<String, dynamic> formData) {
+    // get user ID
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+    // Form is valid, save data to Firestore
+    FirebaseFirestore.instance.collection('service_calls').add({
+      'userId': userId,
+      'category': formData['category'],
+      'area': formData['area'],
+      'description': formData['description'],
+      'cost': formData['cost'],
+      'isCompleted': false,
+    }).then((value) {
+      // Document added successfully
+      print('Data stored in Firestore!');
+    }).catchError((error) {
+      // Handle errors
+      print('Error storing data in Firestore: $error');
+    });
+  }
 
   // variables
   // categories list
   List<String> categories = ['plumbering', 'more'];
-  List<String> regions = ['south', 'north', 'east', 'south'];
+  List<String> regions = ['south', 'north', 'east', 'west'];
 
   @override
   Widget build(BuildContext context) {
     // set variable to get the size of screen height
     double screenHeight = MediaQuery.of(context).size.height;
+
+    // // firestore connection
+    // // get user ID string
+    // String userId = FirebaseAuth.instance.currentUser!.uid;
+    // // reference for service_calls collection
+    // CollectionReference service_calls =
+    //     FirebaseFirestore.instance.collection("service_calls");
 
     // use the custom scaffold for all screens
     return CustomScaffold(
@@ -35,7 +65,7 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
           // create the form for service call
           child: FormBuilder(
             // give the unique key to each form
-            key: _fbKey,
+            key: _formKey,
             // control when the form fields should be automatically validated
             autovalidateMode: AutovalidateMode.always,
             child: Container(
@@ -89,9 +119,9 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                     // sepration between fields
                     const SizedBox(height: 16.0),
 
-                    // 2nd field: Address
+                    // 2nd field: area
                     FormBuilderDropdown(
-                      name: 'category',
+                      name: 'area',
                       // set decoration
                       decoration: const InputDecoration(labelText: 'Area *'),
                       // set the categories to choose from
@@ -106,7 +136,7 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                         // Do something with the selected category
                       },
                     ),
-                    
+
                     // separtion between fields
                     const SizedBox(height: 16.0),
 
@@ -136,9 +166,9 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                     // submit button
                     ElevatedButton(
                       onPressed: () {
-                        if (_fbKey.currentState!.saveAndValidate()) {
-                          // Handle the form data
-                          print(_fbKey.currentState!.value);
+                        if (_formKey.currentState!.saveAndValidate()) {
+                          // submit the form data
+                          _submitForm(_formKey.currentState!.value);
                         }
                       },
                       // decoration for the button
