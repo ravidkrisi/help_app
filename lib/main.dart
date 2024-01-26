@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:help_app/firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:help_app/pages/review_page.dart';
 import 'package:help_app/pages/welcom_page.dart';
 
 void main() async {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: WelcomePage(),
+      home: LeaveReviewPage(serviceCallId: 'SS0A5BQBNDaTT57gTpbc'),
     );
   }
 }

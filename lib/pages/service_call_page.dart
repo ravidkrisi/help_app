@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:help_app/objects/service_call.dart';
+import 'package:help_app/objects/user.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,25 +20,23 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
   // add form data the service_calls firestore collection
-  void _submitForm(Map<String, dynamic> formData) {
+  static void _submitForm(Map<String, dynamic> formData) async{
     // get user ID
     String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-    // Form is valid, save data to Firestore
-    FirebaseFirestore.instance.collection('service_calls').add({
-      'userId': userId,
-      'category': formData['category'],
-      'area': formData['area'],
-      'description': formData['description'],
-      'cost': formData['cost'],
-      'isCompleted': false,
-    }).then((value) {
-      // Document added successfully
-      print('Data stored in Firestore!');
-    }).catchError((error) {
-      // Handle errors
-      print('Error storing data in Firestore: $error');
-    });
+    AppUser? customer = await AppUser.getUserById(userId!);
+
+    ServiceCall.addServiceCallDataToFirestore(ServiceCall(
+        serviceCallId: null,
+        customer: customer,
+        provider: null,
+        category: formData['category'],
+        area: formData['area'],
+        description: formData['description'],
+        cost: formData['cost'],
+        isCompleted: false,
+        rating: null,
+        reviewDesc: null));
   }
 
   // variables
@@ -48,13 +48,6 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
   Widget build(BuildContext context) {
     // set variable to get the size of screen height
     double screenHeight = MediaQuery.of(context).size.height;
-
-    // // firestore connection
-    // // get user ID string
-    // String userId = FirebaseAuth.instance.currentUser!.uid;
-    // // reference for service_calls collection
-    // CollectionReference service_calls =
-    //     FirebaseFirestore.instance.collection("service_calls");
 
     // use the custom scaffold for all screens
     return CustomScaffold(
@@ -115,10 +108,10 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                         // Do something with the selected category
                       },
                     ),
-
+                
                     // sepration between fields
                     const SizedBox(height: 16.0),
-
+                
                     // 2nd field: area
                     FormBuilderDropdown(
                       name: 'area',
@@ -136,10 +129,10 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                         // Do something with the selected category
                       },
                     ),
-
+                
                     // separtion between fields
                     const SizedBox(height: 16.0),
-
+                
                     // 3rd field: description of the service call
                     FormBuilderTextField(
                       name: 'description',
@@ -150,10 +143,10 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-
+                
                     // sepration between fields
                     const SizedBox(height: 16.0),
-
+                
                     // 4th field: Cost (numeric only)
                     FormBuilderTextField(
                       name: 'cost',
