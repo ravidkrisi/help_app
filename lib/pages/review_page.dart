@@ -96,7 +96,7 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
 
                   // 4th field: provider
                   Text(
-                    "provider: ${serviceCall?.provider?.name}\n",
+                    "provider: ${serviceCall?.provider?.name ?? 'NA'}\n",
                     style: const TextStyle(fontSize: 18),
                   ),
 
@@ -120,7 +120,7 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
 
                   // 6th field: description review (optional)
                   FormBuilderTextField(
-                    name: 'description',
+                    name: 'reviewDesc',
                     decoration: InputDecoration(labelText: 'Description'),
                     maxLines: 3,
                   ),
@@ -133,8 +133,7 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
                     onPressed: () {
                       if (_fbKey.currentState!.saveAndValidate()) {
                         // submit the form data
-                        _submitReview(
-                            widget.serviceCallId, _fbKey.currentState!.value);
+                        _submitReview(serviceCall, _fbKey.currentState!.value);
                       }
                     },
                     child: Text('Submit Review'),
@@ -148,27 +147,16 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
     );
   }
 
-  void _submitReview(
-      String serviceCallId, Map<String, dynamic> formData) async {
+  void _submitReview(ServiceCall? call, Map<String, dynamic> formData) async {
     if (_fbKey.currentState!.saveAndValidate()) {
-      // Save review rating and review desc to Firestore review_calls
-      try {
-        CollectionReference service_calls =
-            FirebaseFirestore.instance.collection('service_calls');
-
-        Map<String, dynamic> updatedData = {
-          'rating': formData['rating'],
-          'reviewDesc': formData['description'],
-          // Add other fields you want to update
-        };
-
-        // Update the document with the specified userId
-        await service_calls.doc(serviceCallId).update(updatedData);
-
-        print('User data updated successfully!');
-      } catch (error) {
-        print('Error updating user data: $error');
+      // validate call variable
+      if (call != null) {
+        int rating = formData['rating'];
+        String reviewDesc = formData['reviewDesc'];
+        // call service_call function to update review
+        call.updateReview(rating, reviewDesc);
       }
+      // call service_call function to update review
     }
   }
 }

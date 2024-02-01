@@ -65,7 +65,7 @@ class ServiceCall {
 
         // validate provider and customer variables
         AppUser? customer = await AppUser.getUserById(data['customerID']);
-        AppUser? provider = await AppUser.getUserById(data['customerID']);
+        AppUser? provider = await AppUser.getUserById(data['providerID']);
 
         // Create a ServiceCall object
         ServiceCall serviceCall = ServiceCall(
@@ -92,5 +92,52 @@ class ServiceCall {
       print('Error retrieving service call: $error');
       return null;
     }
+  }
+
+  // update the review info of service call
+  void updateReview(int? rating, String? reviewDesc) async {
+    try {
+      // create reference to service_calls collection
+      CollectionReference service_calls =
+          FirebaseFirestore.instance.collection('service_calls');
+
+      // data to be updated
+      Map<String, dynamic> updatedData = {
+        'rating': rating,
+        'reviewDesc': reviewDesc,
+      };
+      print(serviceCallId);
+      // Update the document with the specified userId
+      await service_calls.doc(serviceCallId).update(updatedData);
+      print("im here");
+
+      print('User data updated successfully!');
+    } catch (error) {
+      print('Error updating user data: $error');
+    }
+  }
+
+  // Function to retrieve all posts and create a list of Post instances
+  static Future<List<ServiceCall?>> getAllPosts() async {
+    QuerySnapshot callsSnapshot =
+        await FirebaseFirestore.instance.collection('service_calls').get();
+
+    List<Future<ServiceCall?>> callsFutures = [];
+
+    for (QueryDocumentSnapshot callDocument in callsSnapshot.docs) {
+      String callId = callDocument.id;
+      // You can add more properties as needed
+      Future<ServiceCall?> call = ServiceCall.getServiceCallById(callId);
+      callsFutures.add(call);
+    }
+
+    // wait for all the futures to complete and then filter out null values
+    List<ServiceCall?> calls = [];
+    for (var future in callsFutures) {
+      var call = await future;
+      calls.add(call);
+    }
+
+    return calls;
   }
 }

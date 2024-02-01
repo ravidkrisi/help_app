@@ -54,7 +54,11 @@ class AppUser {
   }
 
   // Function to get user data from Firestore by ID
-  static Future<AppUser?> getUserById(String userId) async {
+  static Future<AppUser?> getUserById(String? userId) async {
+
+    // check if user null
+    if (userId == null) return null;
+    
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
