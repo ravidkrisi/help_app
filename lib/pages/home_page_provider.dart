@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:help_app/objects/service_call.dart';
+import 'package:help_app/pages/provider_profile.dart';
 import 'package:help_app/widgets/call_card.dart';
 
 class HomePageProvider extends StatefulWidget {
@@ -117,7 +118,24 @@ class HomePageProviderState extends State<HomePageProvider> {
           ),
         ],
         onTap: (index) {
-          // Handle tapping on the bottom navigation bar items if needed
+          switch (index) {
+    case 0:
+      // Handle tapping on the Home button if needed
+      break;
+    case 1:
+      // Handle tapping on the Profile button
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProviderProfile(), // Replace with the actual ProfileProvider widget
+        ),
+      );
+      break;
+    case 2:
+      // Handle tapping on the History button if needed
+      break;
+  }
+
         },
       ),
     );
