@@ -40,48 +40,38 @@ class CallCard extends StatelessWidget {
                 "Location: ${call?.area}"), // Display the location of the service call
             SizedBox(height: 10), // Add vertical spacing
             Text(
-                "isOpen: ${call?.isCompleted}"), // Display whether the call is open or not
-            SizedBox(height: 10), // Add vertical spacing
-            Text(
                 "Price: \$${call?.cost}"), // Display the cost of the service call
             SizedBox(height: 25), // Add vertical spacing
             Text(call?.description ??
                 ''), // Display the description of the service call
             SizedBox(height: 16), // Add vertical spacing
-            // Elevated button for taking the job
-            ElevatedButton(
-              onPressed: () {
-                // Callback function when the "Take Job" button is pressed
-                print("Submit Offer button pressed for ${call?.category}");
-              },
-              child: Text("Take Job"), // Text on the button
-            ),
           ],
         ),
       ),
     );
   }
 }
+
 // Helper method for building a status indicator based on isOpen
-  Widget _buildStatusIndicator(bool? isOpen) {
-    Color ind_color = Colors.black; // Default color for the status indicator
+Widget _buildStatusIndicator(bool? isCompleted) {
+  Color ind_color = Colors.black; // Default color for the status indicator
 
-    // Check the value of isOpen and set the color accordingly
-    if (isOpen == null) {
-      ind_color = Colors.grey; // Grey for null
-    } else if (isOpen == true) {
-      ind_color = Colors.green; // Green for true
-    } else if (isOpen == false) {
-      ind_color = Colors.red; // Red for false
-    }
-
-    // Return a circular status indicator with the determined color
-    return Container(
-      width: 12,
-      height: 12,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: ind_color,
-      ),
-    );
+  // Check the value of isOpen and set the color accordingly
+  if (isCompleted == null) {
+    ind_color = Colors.grey; // Grey for null
+  } else if (isCompleted == true) {
+    ind_color = Colors.red; // Green for true
+  } else if (isCompleted == false) {
+    ind_color = Colors.green; // Red for false
   }
+
+  // Return a circular status indicator with the determined color
+  return Container(
+    width: 12,
+    height: 12,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: ind_color,
+    ),
+  );
+}

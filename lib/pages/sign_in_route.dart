@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/customer_welcome_page.dart';
 //import 'package:help_app/pages/home_page.dart';
-import 'package:help_app/pages/home_page_client.dart';
+import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/pages/home_page_provider.dart';
 import 'package:help_app/pages/provider_profile.dart';
 import 'package:help_app/pages/sign_in_page.dart';

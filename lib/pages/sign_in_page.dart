@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/pages/customer_sign_up_page.dart';
-import 'package:help_app/pages/home_page_client.dart';
+import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
