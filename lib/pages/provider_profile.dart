@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/objects/provider_user.dart';
 import 'package:help_app/objects/user.dart';
+import 'package:help_app/pages/customer_welcome_page.dart';
 
 class ProviderProfile extends StatefulWidget {
   const ProviderProfile({Key? key}) : super(key: key);
@@ -44,43 +45,56 @@ class _ProviderProfileState extends State<ProviderProfile> {
       appBar: AppBar(
         title: Text('Service Provider Profile'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 20), // Added space from top
-            CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.blue, // Change to blue
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
-                size: 80,
-              ),
+      body: Column(
+        children: [
+          Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 20), // Added space from top
+                CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.blue, // Change to blue
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 80,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  _user?.name ?? 'NA',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                _buildBoldTextWithStars(
+                    'proffesion:', _user?.profession ?? 'NA'),
+                SizedBox(height: 10),
+                _buildBoldTextWithStars('Area:', _user?.area ?? 'NA'),
+                SizedBox(height: 10),
+                _buildBoldTextWithStars('Rating:',
+                    _user?.rating.toString() ?? '1.1'), // Changed here
+                SizedBox(height: 10),
+                // _buildBoldTextWithStars('Recommendations:', first.recommendations),
+                SizedBox(height: 20), // Added space from top
+              ],
             ),
-            SizedBox(height: 20),
-            Text(
-              _user?.name ?? 'NA',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-            _buildBoldTextWithStars('proffesion:', _user?.profession ?? 'NA'),
-            SizedBox(height: 10),
-            _buildBoldTextWithStars(
-                'Area of Occupation:', _user?.location ?? 'NA'),
-            SizedBox(height: 10),
-            _buildBoldTextWithStars(
-                'Rating:', _user?.rating.toString() ?? '1.1'), // Changed here
-            SizedBox(height: 10),
-            // _buildBoldTextWithStars('Recommendations:', first.recommendations),
-            SizedBox(height: 20), // Added space from top
-            _buildBottomButtons(context), // Added bottom buttons
-          ],
-        ),
+          ),
+
+          // divider
+          const SizedBox(
+            height: 80.0,
+          ),
+
+          // bottom navigator buttons bar
+          Container(
+            child: _buildBottomButtons(context),
+          )
+        ],
       ),
     );
   }
@@ -180,29 +194,32 @@ class _ProviderProfileState extends State<ProviderProfile> {
         ),
         GestureDetector(
           onTap: () {
-            // Handle tapping the search button
-            // You can implement search functionality here
+            _signOut(context);
           },
           child: Column(
             children: [
-              Icon(Icons.search, size: 30),
-              Text('Search'),
-            ],
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            // Handle tapping the profile button
-            // You can navigate to the user's profile screen here
-          },
-          child: Column(
-            children: [
-              Icon(Icons.person, size: 30),
-              Text('Profile'),
+              Icon(Icons.logout, size: 30),
+              Text('log out'),
             ],
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      // Navigate to the sign-in page after successful logout
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) =>
+              CustomerWelcomePage(), // Replace SignInPage with your actual sign-in page widget
+        ),
+      );
+    } catch (e) {
+      print('Error signing out: $e');
+      // Handle error signing out, if any
+    }
   }
 }
