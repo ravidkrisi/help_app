@@ -21,7 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
   // create instance of firenase authenticator
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // controllers for email and password user input
+  // controllers for user input
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -37,14 +37,14 @@ class _SignUpPageState extends State<SignUpPage> {
   // send user email and password to FireBase Auth
   Future<void> _signUpFunc(BuildContext context) async {
     try {
-      // store user data in 'users' firestore
-      addUserDataToFirestore(_nameController.text, _emailController.text,
-          _nicknameController.text, _creditcardController.text);
-
       // sign up the user
       await _auth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim());
+
+      // store user data in 'users' firestore
+      addUserDataToFirestore(_nameController.text, _emailController.text,
+          _nicknameController.text, _creditcardController.text);
 
       // Redirect to home page after successful sign-up
       Navigator.pushReplacement(
@@ -78,9 +78,12 @@ class _SignUpPageState extends State<SignUpPage> {
       String name, String email, String nickname, String creditcard) async {
     // set connection to users collection
     CollectionReference users = FirebaseFirestore.instance.collection('users');
+    // get userID from firebaseAuth
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
 
     // create new doc of user. set unique ID
     await users.add({
+      'userId': userId,
       'name': name,
       'email': email,
       'nickname': nickname,
@@ -161,18 +164,18 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(
                         height: 25.0,
                       ),
-
+                      // textfield for username
                       TextFormField(
                         controller: _nicknameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter a Nickname';
+                            return 'Please enter a username';
                           }
                           return null;
                         },
                         decoration: InputDecoration(
-                          label: const Text('Nickname'),
-                          hintText: 'Enter Nickname',
+                          label: const Text('username'),
+                          hintText: 'Enter username',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
                           ),
@@ -197,7 +200,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       // email
                       TextFormField(
                         // set pwd text field border to black after input submited
-
                         onFieldSubmitted: (value) {
                           setState(() {
                             _emailBorderColor = Colors.black26;

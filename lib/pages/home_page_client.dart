@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:help_app/objects/service_call.dart';
 import 'package:help_app/pages/provider_profile.dart';
+import 'package:help_app/pages/service_call_page.dart';
 import 'package:help_app/widgets/call_card.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePageProvider extends StatefulWidget {
-  const HomePageProvider({Key? key}) : super(key: key);
+
+class HomePageCustomer extends StatefulWidget {
+  const HomePageCustomer({Key? key}) : super(key: key);
 
   @override
-  State<HomePageProvider> createState() => HomePageProviderState();
+  State<HomePageCustomer> createState() => HomePageCustomerState();
 }
 
-class HomePageProviderState extends State<HomePageProvider> {
+class HomePageCustomerState extends State<HomePageCustomer> {
   String selectedLocation = "All";
   int originalVisiblePostCount = 10;
   int visiblePostCount = 10;
@@ -27,8 +30,9 @@ class HomePageProviderState extends State<HomePageProvider> {
 
   // async function to fetch all service calls
   Future<void> fetchCalls() async {
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
     try {
-      List<ServiceCall?> calls = await ServiceCall.getAllPosts();
+      List<ServiceCall?> calls = await ServiceCall.getAllCustomerPosts(userId!);
       setState(() {
         allCalls = calls;
         _isLoading = false;
@@ -43,6 +47,18 @@ class HomePageProviderState extends State<HomePageProvider> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to your another screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ServiceCallPage(), // Replace with your actual screen
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
       // top bar
       appBar: AppBar(
         title: Text("Posts"),
@@ -119,23 +135,23 @@ class HomePageProviderState extends State<HomePageProvider> {
         ],
         onTap: (index) {
           switch (index) {
-            case 0:
-              // Handle tapping on the Home button if needed
-              break;
-            case 1:
-              // Handle tapping on the Profile button
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ProviderProfile(), // Replace with the actual ProfileProvider widget
-                ),
-              );
-              break;
-            case 2:
-              // Handle tapping on the History button if needed
-              break;
-          }
+    case 0:
+      // Handle tapping on the Home button if needed
+      break;
+    case 1:
+      // Handle tapping on the Profile button
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProviderProfile(), // Replace with the actual ProfileProvider widget
+        ),
+      );
+      break;
+    case 2:
+      // Handle tapping on the History button if needed
+      break;
+  }
+
         },
       ),
     );
