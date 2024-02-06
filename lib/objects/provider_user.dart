@@ -4,24 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderUser extends AppUser {
   late String profession;
-  late String location;
   late double rating;
 
   ProviderUser({
     required String userId,
     required String name,
     required String email,
-    required String nickname,
-    required String creditcard,
+    required String area,
+    required int type,
     required this.profession,
     required this.rating,
-    required this.location,
   }) : super(
           userId: userId,
           name: name,
           email: email,
-          nickname: nickname,
-          creditcard: creditcard,
+          area: area,
+          type: type,
         );
 
   // Override the getUserById method to return additional information
@@ -45,11 +43,10 @@ class ProviderUser extends AppUser {
           userId: data['userId'] ?? '',
           name: data['name'] ?? '',
           email: data['email'] ?? '',
-          nickname: data['nickname'] ?? '',
-          creditcard: data['creditcard'] ?? '',
           profession: data['proffesion'] ?? '',
           rating: double.parse(data['rating'] ?? '0'),
-          location: data['area'] ?? '',
+          area: data['area'] ?? '',
+          type: data['type'] ?? '', 
         );
 
         return user;

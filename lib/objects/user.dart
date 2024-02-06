@@ -4,8 +4,8 @@ class AppUser {
   late String userId;
   late String name;
   late String email;
-  late String nickname;
-  late String creditcard;
+  late String area;
+  late int type;
 
   // // default constructor
   // User() : userId = '', name = '', email = '', nickname = '', creditcard = '';
@@ -15,17 +15,17 @@ class AppUser {
     required this.userId,
     required this.name,
     required this.email,
-    required this.nickname,
-    required this.creditcard,
+    required this.area,
+    required this.type,
   });
 
   // Named constructor for creating a default user
   AppUser.defaultUser()
       : userId = '',
         name = '',
+        area = '',
         email = '',
-        nickname = '',
-        creditcard = '';
+        type = 0;
 
   // Factory constructor to create a user instance from a DocumentSnapshot
   factory AppUser.fromSnapshot(DocumentSnapshot snapshot) {
@@ -35,8 +35,8 @@ class AppUser {
       userId: data['userId'] ?? '',
       name: data['name'] ?? '',
       email: data['email'] ?? '',
-      nickname: data['nickname'] ?? '',
-      creditcard: data['creditcard'] ?? '',
+      area: data['area'] ?? '',
+      type: data['type'] ?? 0, 
     );
   }
 
@@ -48,17 +48,16 @@ class AppUser {
       'userId': user.userId,
       'name': user.name,
       'email': user.email,
-      'nickname': user.nickname,
-      'creditcard': user.creditcard,
+      'area': user.area,
+      'type': user.type,
     });
   }
 
   // Function to get user data from Firestore by ID
   static Future<AppUser?> getUserById(String? userId) async {
-
     // check if user null
     if (userId == null) return null;
-    
+
     try {
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance

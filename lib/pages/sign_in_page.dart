@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:help_app/pages/sign_up_page.dart';
+import 'package:help_app/pages/customer_sign_up_page.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -175,13 +175,14 @@ class _SignInPageState extends State<SignInPage> {
                             decoration: BoxDecoration(
                                 color: Colors.blue,
                                 borderRadius: BorderRadius.circular(12)),
-                            child: const Center(child: Text(
+                            child: const Center(
+                                child: Text(
                               "sign in",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
-                              )),
+                            )),
                           ),
                         ),
                         // GestureDetector(
@@ -270,7 +271,7 @@ class _SignInPageState extends State<SignInPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (e) => const SignUpPage(),
+                                    builder: (e) => const CustomerSignUpPage(),
                                   ),
                                 );
                               },
