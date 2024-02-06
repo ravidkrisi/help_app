@@ -81,7 +81,7 @@ class _SignInPageState extends State<SignInPage> {
       children: [
         const Expanded(flex: 2, child: SizedBox(height: 10)),
         Expanded(
-            flex: 7,
+            flex: 5,
             child: Container(
               padding: const EdgeInsets.fromLTRB(25, 50, 25, 20),
               decoration: const BoxDecoration(
@@ -95,6 +95,8 @@ class _SignInPageState extends State<SignInPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+
+                        // header
                         Text(
                           'Welcome back to HELPAPP',
                           style: TextStyle(
