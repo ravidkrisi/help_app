@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/pages/customer_sign_up_page.dart';
+import 'package:help_app/pages/home_page_client.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -13,6 +14,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
 
@@ -21,10 +23,47 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
 
   // sign in function
-  Future signInFunc() async {
-    FirebaseAuth.instance.signInWithEmailAndPassword(
+  void signInFunc() async {
+    try {
+      // Sign in user with email and password
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
+        password: _passwordController.text.trim(),
+      );
+
+      // If sign-in is successful, navigate to home page
+      if (userCredential.user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageCustomer()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      // Handle specific authentication errors
+      String errorMessage =
+          'Incorrect email or password. Please check and try again.';
+
+      // Show error message in a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } catch (e) {
+      // Catch any other errors and print them
+      print("Error during sign in: $e");
+
+      // Show a generic error message in a snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text('An error occurred during sign-in. Please try again later.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   // dispose controller to help memory management

@@ -5,64 +5,51 @@ import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:help_app/pages/home_page_client.dart'; // Import HomePageCustomer page
 
 class ServiceCallPage extends StatefulWidget {
   const ServiceCallPage({super.key});
-
-  // set unique value to the form
 
   @override
   State<ServiceCallPage> createState() => _ServiceCallPageState();
 }
 
 class _ServiceCallPageState extends State<ServiceCallPage> {
-  // set unique value to the form
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
-  // add form data the service_calls firestore collection
-  static void _submitForm(Map<String, dynamic> formData) async{
-    // get user ID
+  static void _submitForm(Map<String, dynamic> formData) async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
-
     AppUser? customer = await AppUser.getUserById(userId!);
 
     ServiceCall.addServiceCallDataToFirestore(ServiceCall(
-        serviceCallId: null,
-        customer: customer,
-        provider: null,
-        category: formData['category'],
-        area: formData['area'],
-        description: formData['description'],
-        cost: formData['cost'],
-        isCompleted: false,
-        rating: null,
-        reviewDesc: null));
+      serviceCallId: null,
+      customer: customer,
+      provider: null,
+      category: formData['category'],
+      area: formData['area'],
+      description: formData['description'],
+      cost: formData['cost'],
+      isCompleted: false,
+      rating: null,
+      reviewDesc: null,
+    ));
   }
 
-  // variables
-  // categories list
   List<String> categories = ['plumbering', 'more'];
   List<String> regions = ['south', 'north', 'east', 'west'];
 
   @override
   Widget build(BuildContext context) {
-    // set variable to get the size of screen height
     double screenHeight = MediaQuery.of(context).size.height;
 
-    // use the custom scaffold for all screens
     return CustomScaffold(
       child: Padding(
         padding: const EdgeInsets.all(20),
-        // enable scroll if keyboard is on screen
         child: SingleChildScrollView(
-          // create the form for service call
           child: FormBuilder(
-            // give the unique key to each form
             key: _formKey,
-            // control when the form fields should be automatically validated
             autovalidateMode: AutovalidateMode.always,
             child: Container(
-              // decoration for the form box
               height: screenHeight * 2 / 3,
               padding: const EdgeInsets.fromLTRB(25.0, 30.0, 25.0, 10.0),
               decoration: BoxDecoration(
@@ -74,66 +61,44 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), // Shadow color
-                    spreadRadius: 5, // Spread radius
-                    blurRadius: 7, // Blur radius
-                    offset: const Offset(0, 3), // Offset in the x, y direction
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
-
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  // set column to the vetical and horizontal center
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // 1st field: category
-                    // this field is a drop down for the customer to choose from
                     FormBuilderDropdown(
                       name: 'category',
-                      // set decoration
                       decoration:
                           const InputDecoration(labelText: 'Category *'),
-                      // set the categories to choose from
-                      // convert string list to DropDownMenuItem list
                       items: categories
                           .map((category) => DropdownMenuItem(
                                 value: category,
                                 child: Text(category),
                               ))
                           .toList(),
-                      onChanged: (category) {
-                        // Do something with the selected category
-                      },
+                      onChanged: (category) {},
                     ),
-                
-                    // sepration between fields
                     const SizedBox(height: 16.0),
-                
-                    // 2nd field: area
                     FormBuilderDropdown(
                       name: 'area',
-                      // set decoration
                       decoration: const InputDecoration(labelText: 'Area *'),
-                      // set the categories to choose from
-                      // convert string list to DropDownMenuItem list
                       items: regions
                           .map((region) => DropdownMenuItem(
                                 value: region,
                                 child: Text(region),
                               ))
                           .toList(),
-                      onChanged: (region) {
-                        // Do something with the selected category
-                      },
+                      onChanged: (region) {},
                     ),
-                
-                    // separtion between fields
                     const SizedBox(height: 16.0),
-                
-                    // 3rd field: description of the service call
                     FormBuilderTextField(
                       name: 'description',
                       maxLines: 3,
@@ -143,38 +108,36 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-                
-                    // sepration between fields
                     const SizedBox(height: 16.0),
-                
-                    // 4th field: Cost (numeric only)
                     FormBuilderTextField(
                       name: 'cost',
-                      // set keyboard to number only decoration
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(labelText: 'Cost'),
                     ),
-                    // separtion between fields
                     const SizedBox(height: 40.0),
-                    // submit button
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.saveAndValidate()) {
-                          // submit the form data
                           _submitForm(_formKey.currentState!.value);
+                          // Navigate back to HomePageCustomer after submitting the form
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomePageCustomer(),
+                            ),
+                          );
                         }
                       },
-                      // decoration for the button
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.blue), // Set button background color
-                        foregroundColor: MaterialStateProperty.all<Color>(
-                            Colors.white), // Set font color
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.blue),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
                         fixedSize: MaterialStateProperty.all<Size>(
-                          const Size(120, 50), // Set width and height
+                          const Size(120, 50),
                         ),
                         textStyle: MaterialStateProperty.all<TextStyle>(
-                          const TextStyle(fontSize: 16), // Set font size
+                          const TextStyle(fontSize: 16),
                         ),
                       ),
                       child: const Text('Submit'),

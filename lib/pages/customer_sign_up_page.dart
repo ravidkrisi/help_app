@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:help_app/pages/home_page.dart';
+import 'package:help_app/pages/home_page_client.dart';
 import 'package:help_app/pages/sign_in_page.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
@@ -34,40 +34,57 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
 
   // send user email and password to FireBase Auth
   Future<void> _signUpFunc(BuildContext context) async {
+    String errorMessage = '';
+
     try {
-      // sign up the user
-      await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-
-      // store user data in 'users' firestore
-      addUserDataToFirestore(
-          _nameController.text, _emailController.text, _SelctedArea!);
-
-      // Redirect to home page after successful sign-up
-      Navigator.pushReplacement(
-        context,
-        // ignore: prefer_const_constructors
-        MaterialPageRoute(builder: (context) => HomePage()),
+      // Sign up the user
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-    }
-    // catch invalid sign up arguments
-    on FirebaseAuthException catch (e) {
-      // invalid email address
-      if (e.code == 'invalid-email') {
+
+      // Store user data in Firestore
+      if (userCredential.user != null) {
+        await addUserDataToFirestore(
+          _nameController.text,
+          _emailController.text,
+          _SelctedArea!,
+        );
+
+        // Redirect to home page after successful sign-up
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageCustomer()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        // Set border color of email field to red
         setState(() {
           _emailBorderColor = Colors.red;
+          errorMessage =
+              'Email is already in use. Please enter a different email.';
         });
       } else if (e.code == 'weak-password') {
+        // Set border color of password field to red
         setState(() {
           _passwordBorderColor = Colors.red;
+          errorMessage = 'Weak password. Please choose a stronger password.';
         });
       }
+    } catch (e) {
+      print("Error during sign up: $e");
     }
-    // handle errors
-    catch (e) {
-      // ignore: avoid_print
-      print("error during sign up $e");
+
+    // Show error message if any
+    if (errorMessage.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

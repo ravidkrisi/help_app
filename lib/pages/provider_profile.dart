@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/objects/provider_user.dart';
 import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/customer_welcome_page.dart';
+import 'package:help_app/pages/home_page_provider.dart'; // Import HomePageProvider page
 
 class ProviderProfile extends StatefulWidget {
   const ProviderProfile({Key? key}) : super(key: key);
@@ -23,17 +24,13 @@ class _ProviderProfileState extends State<ProviderProfile> {
 
   Future<void> checkCurrentUser() async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
-    ProviderUser? provider_user = await ProviderUser.getUserById(userId!);
+    ProviderUser? providerUser = await ProviderUser.getUserById(userId!);
 
     if (userId.isNotEmpty) {
-      // User is logged in
-      // ProviderUser? provider_user = await ProviderUser.getUserById(userId);
-      if (provider_user != null) {
-        setState(() {
-          _uid = userId;
-          _user = provider_user;
-        });
-      }
+      setState(() {
+        _uid = userId;
+        _user = providerUser;
+      });
     } else {
       print("User not logged in");
     }
@@ -182,8 +179,11 @@ class _ProviderProfileState extends State<ProviderProfile> {
       children: [
         GestureDetector(
           onTap: () {
-            // Handle tapping the home button
-            // You can navigate to the home screen here
+            // Navigate to HomePageProvider
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePageProvider()),
+            );
           },
           child: Column(
             children: [
@@ -199,7 +199,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
           child: Column(
             children: [
               Icon(Icons.logout, size: 30),
-              Text('log out'),
+              Text('Log out'),
             ],
           ),
         ),
