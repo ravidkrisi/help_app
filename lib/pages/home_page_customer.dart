@@ -5,7 +5,6 @@ import 'package:help_app/pages/service_call_page.dart';
 import 'package:help_app/widgets/call_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class HomePageCustomer extends StatefulWidget {
   const HomePageCustomer({Key? key}) : super(key: key);
 
@@ -18,8 +17,10 @@ class HomePageCustomerState extends State<HomePageCustomer> {
   int originalVisiblePostCount = 10;
   int visiblePostCount = 10;
   bool _isLoading = true;
+  int _selectedIndex = 0; // Add this variable to track the selected item index
 
   List<ServiceCall?> allCalls = [];
+  List<ServiceCall?> filteredCalls = [];
 
   // set state when build the page
   @override
@@ -35,6 +36,8 @@ class HomePageCustomerState extends State<HomePageCustomer> {
       List<ServiceCall?> calls = await ServiceCall.getAllCustomerPosts(userId!);
       setState(() {
         allCalls = calls;
+        filteredCalls =
+            allCalls.where((call) => call?.isCompleted == false).toList();
         _isLoading = false;
       });
       print("fetched all service calls data successfully");
@@ -53,7 +56,8 @@ class HomePageCustomerState extends State<HomePageCustomer> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ServiceCallPage(), // Replace with your actual screen
+              builder: (context) =>
+                  ServiceCallPage(), // Replace with your actual screen
             ),
           );
         },
@@ -71,44 +75,17 @@ class HomePageCustomerState extends State<HomePageCustomer> {
               ? Center(child: CircularProgressIndicator())
               : Column(
                   children: [
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // location filter
-                          Text("Location: "),
-                          DropdownButton<String>(
-                            value: selectedLocation,
-                            items: getUniqueLocations().map((location) {
-                              return DropdownMenuItem<String>(
-                                value: location,
-                                child: Text(location),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedLocation = value!;
-                                visiblePostCount = originalVisiblePostCount;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    
                     // create calls feed
                     Expanded(
                       child: ListView.builder(
-                        itemCount: allCalls.length,
+                        itemCount: filteredCalls.length,
                         itemBuilder: (context, index) {
-                          // Check if the call's location matches the selected location
-                          if (selectedLocation == "All" ||
-                              allCalls[index]?.area == selectedLocation) {
-                            return CallCard(call: allCalls[index]);
-                          } else {
-                            // Return an empty container if the location doesn't match
+                          if (filteredCalls.isNotEmpty) {
+                            // Check if the call's location matches the selected location
+                            return CallCard(call: filteredCalls[index]);
+                          } else
                             return Container();
-                          }
                         },
                       ),
                     ),
@@ -116,6 +93,8 @@ class HomePageCustomerState extends State<HomePageCustomer> {
                 ),
       // bottom bar
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.purple,
+        currentIndex: _selectedIndex,
         items: [
           // home button
           BottomNavigationBarItem(
@@ -134,24 +113,35 @@ class HomePageCustomerState extends State<HomePageCustomer> {
           ),
         ],
         onTap: (index) {
+          setState(() {
+            _selectedIndex = index; // Update the selected index
+          });
           switch (index) {
-    case 0:
-      // Handle tapping on the Home button if needed
-      break;
-    case 1:
-      // Handle tapping on the Profile button
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProviderProfile(), // Replace with the actual ProfileProvider widget
-        ),
-      );
-      break;
-    case 2:
-      // Handle tapping on the History button if needed
-      break;
-  }
-
+            case 0:
+              setState(() {
+                filteredCalls = allCalls
+                    .where((call) => call?.isCompleted == false)
+                    .toList();
+              });
+              break;
+            case 1:
+              // Handle tapping on the Profile button
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ProviderProfile(), // Replace with the actual ProfileProvider widget
+                ),
+              );
+              break;
+            case 2:
+              setState(() {
+                filteredCalls = allCalls
+                    .where((call) => call?.isCompleted == true)
+                    .toList();
+              });
+              break;
+          }
         },
       ),
     );

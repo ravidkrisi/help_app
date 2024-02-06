@@ -44,7 +44,15 @@ class CallCard extends StatelessWidget {
             SizedBox(height: 25), // Add vertical spacing
             Text(call?.description ??
                 ''), // Display the description of the service call
-            SizedBox(height: 16), // Add vertical spacing
+            SizedBox(height: 16),
+
+            // ElevatedButton(
+            //   onPressed: () {
+            //     // Callback function when the "Take Job" button is pressed
+            //     print("Submit Offer button pressed for ${call?.category}");
+            //   },
+            //   child: Text("Take Job"), // Text on the button
+            // ), // Add vertical spacing
           ],
         ),
       ),

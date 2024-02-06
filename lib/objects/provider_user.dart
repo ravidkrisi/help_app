@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderUser extends AppUser {
   late String profession;
-  late double rating;
+  late num rating;
 
   ProviderUser({
     required String userId,
@@ -38,15 +38,14 @@ class ProviderUser extends AppUser {
             documentSnapshot.data() as Map<String, dynamic>;
 
         // Create a ProviderUser instance
-        print(data['rating']);
         ProviderUser user = ProviderUser(
           userId: data['userId'] ?? '',
           name: data['name'] ?? '',
           email: data['email'] ?? '',
           profession: data['proffesion'] ?? '',
-          rating: double.parse(data['rating'] ?? '0'),
+          rating: data['rating'] ?? 1.1,
           area: data['area'] ?? '',
-          type: data['type'] ?? '', 
+          type: data['type'] ?? 0,
         );
 
         return user;

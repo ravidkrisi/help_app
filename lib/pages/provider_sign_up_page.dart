@@ -86,6 +86,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
       'name': name,
       'email': email,
       'category': category,
+      'rating': "0",
     });
   }
 

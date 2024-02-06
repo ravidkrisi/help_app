@@ -30,6 +30,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
       setState(() {
         _uid = userId;
         _user = providerUser;
+        // print(_user?.rating);
       });
     } else {
       print("User not logged in");
@@ -68,13 +69,12 @@ class _ProviderProfileState extends State<ProviderProfile> {
                   ),
                 ),
                 SizedBox(height: 10),
+                _buildBoldText('proffesion:', _user?.profession ?? 'NA'),
+                SizedBox(height: 10),
+                _buildBoldText('Area:', _user?.area ?? 'NA'),
+                SizedBox(height: 10),
                 _buildBoldTextWithStars(
-                    'proffesion:', _user?.profession ?? 'NA'),
-                SizedBox(height: 10),
-                _buildBoldTextWithStars('Area:', _user?.area ?? 'NA'),
-                SizedBox(height: 10),
-                _buildBoldTextWithStars('Rating:',
-                    _user?.rating.toString() ?? '1.1'), // Changed here
+                    'Rating:', _user?.rating ?? 1.1), // Changed here
                 SizedBox(height: 10),
                 // _buildBoldTextWithStars('Recommendations:', first.recommendations),
                 SizedBox(height: 20), // Added space from top
@@ -96,9 +96,9 @@ class _ProviderProfileState extends State<ProviderProfile> {
     );
   }
 
-  Widget _buildStarRating(double rating) {
+  Widget _buildStarRating(num rating) {
     int fullStars = rating.floor();
-    double halfStar = rating - fullStars;
+    num halfStar = rating - fullStars;
 
     List<Widget> stars = [];
 
@@ -147,7 +147,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
     );
   }
 
-  Widget _buildBoldTextWithStars(String label, String text) {
+  Widget _buildBoldTextWithStars(String label, num rating) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -158,17 +158,10 @@ class _ProviderProfileState extends State<ProviderProfile> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(width: 5),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
+
         SizedBox(width: 5),
         if (label == 'Rating:')
-          _buildStarRating(
-              double.parse(text)), // Display stars if label is 'Rating:'
+          _buildStarRating(rating), // Display stars if label is 'Rating:'
       ],
     );
   }
