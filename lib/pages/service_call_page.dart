@@ -35,8 +35,13 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
     ));
   }
 
-  List<String> categories = ['plumbering', 'more'];
-  List<String> regions = ['south', 'north', 'east', 'west'];
+  List<String> categories = [
+    "Housekeeping",
+    "Babysitting",
+    "Dog-Sitting",
+    "Plumbering"
+  ];
+  List<String> regions = ['Tel Aviv', 'Jerusalem', 'Haifa', 'Beer-Sheva'];
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +81,7 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                   children: [
                     FormBuilderDropdown(
                       name: 'category',
-                      decoration:
-                          const InputDecoration(labelText: 'Category *'),
+                      decoration: const InputDecoration(labelText: 'Category*'),
                       items: categories
                           .map((category) => DropdownMenuItem(
                                 value: category,
@@ -89,7 +93,7 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                     const SizedBox(height: 16.0),
                     FormBuilderDropdown(
                       name: 'area',
-                      decoration: const InputDecoration(labelText: 'Area *'),
+                      decoration: const InputDecoration(labelText: 'Area*'),
                       items: regions
                           .map((region) => DropdownMenuItem(
                                 value: region,
@@ -112,7 +116,7 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                     FormBuilderTextField(
                       name: 'cost',
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: 'Cost'),
+                      decoration: const InputDecoration(labelText: 'Cost*'),
                     ),
                     const SizedBox(height: 40.0),
                     ElevatedButton(

@@ -118,11 +118,15 @@ class HomePageCustomerState extends State<HomePageCustomer> {
           });
           switch (index) {
             case 0:
+<<<<<<< HEAD
               setState(() {
                 filteredCalls = allCalls
                     .where((call) => call?.isCompleted == false)
                     .toList();
               });
+=======
+              // Handle tapping on the Home button if needed
+>>>>>>> 210630d7e961da4a36c5d396e0eaeff6ce78b70f
               break;
             case 1:
               // Handle tapping on the Profile button
@@ -135,11 +139,15 @@ class HomePageCustomerState extends State<HomePageCustomer> {
               );
               break;
             case 2:
+<<<<<<< HEAD
               setState(() {
                 filteredCalls = allCalls
                     .where((call) => call?.isCompleted == true)
                     .toList();
               });
+=======
+              // Handle tapping on the History button if needed
+>>>>>>> 210630d7e961da4a36c5d396e0eaeff6ce78b70f
               break;
           }
         },

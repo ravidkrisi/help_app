@@ -74,7 +74,16 @@ class _ProviderProfileState extends State<ProviderProfile> {
                 _buildBoldText('Area:', _user?.area ?? 'NA'),
                 SizedBox(height: 10),
                 _buildBoldTextWithStars(
+<<<<<<< HEAD
                     'Rating:', _user?.rating ?? 1.1), // Changed here
+=======
+                    'proffesion:', _user?.profession ?? 'NA'),
+                SizedBox(height: 10),
+                // _buildBoldTextWithStars('Area:', _user?.area ?? 'NA'),
+                // SizedBox(height: 10),
+                _buildBoldTextWithStars('Rating:',
+                    _user?.rating.toString() ?? '1.1'), // Changed here
+>>>>>>> 210630d7e961da4a36c5d396e0eaeff6ce78b70f
                 SizedBox(height: 10),
                 // _buildBoldTextWithStars('Recommendations:', first.recommendations),
                 SizedBox(height: 20), // Added space from top
