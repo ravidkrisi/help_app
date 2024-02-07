@@ -1,34 +1,32 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:help_app/pages/home_page.dart';
+import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/pages/sign_in_page.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/theme/theme.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+class CustomerSignUpPage extends StatefulWidget {
+  const CustomerSignUpPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<CustomerSignUpPage> createState() => _CustomerSignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+List<String> categories = ["Category 1", "Category 2", "Category 3"];
+String? _SelctedArea; // variable to hold the selected category
+
+class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
 
   // create instance of firenase authenticator
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // controllers for email and password user input
+  // controllers for user input
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _nicknameController = TextEditingController();
-  final TextEditingController _creditcardController = TextEditingController();
-
-  final FocusNode _focusNode = FocusNode();
 
   // decoration variables
   Color _emailBorderColor = Colors.black26;
@@ -36,55 +34,74 @@ class _SignUpPageState extends State<SignUpPage> {
 
   // send user email and password to FireBase Auth
   Future<void> _signUpFunc(BuildContext context) async {
+    String errorMessage = '';
+
     try {
-      // store user data in 'users' firestore
-      addUserDataToFirestore(_nameController.text, _emailController.text,
-          _nicknameController.text, _creditcardController.text);
-
-      // sign up the user
-      await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-
-      // Redirect to home page after successful sign-up
-      Navigator.pushReplacement(
-        context,
-        // ignore: prefer_const_constructors
-        MaterialPageRoute(builder: (context) => HomePage()),
+      // Sign up the user
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-    }
-    // catch invalid sign up arguments
-    on FirebaseAuthException catch (e) {
-      // invalid email address
-      if (e.code == 'invalid-email') {
+
+      // Store user data in Firestore
+      if (userCredential.user != null) {
+        await addUserDataToFirestore(
+          _nameController.text,
+          _emailController.text,
+          _SelctedArea!,
+        );
+
+        // Redirect to home page after successful sign-up
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageCustomer()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        // Set border color of email field to red
         setState(() {
           _emailBorderColor = Colors.red;
+          errorMessage =
+              'Email is already in use. Please enter a different email.';
         });
       } else if (e.code == 'weak-password') {
+        // Set border color of password field to red
         setState(() {
           _passwordBorderColor = Colors.red;
+          errorMessage = 'Weak password. Please choose a stronger password.';
         });
       }
+    } catch (e) {
+      print("Error during sign up: $e");
     }
-    // handle errors
-    catch (e) {
-      // ignore: avoid_print
-      print("error during sign up $e");
+
+    // Show error message if any
+    if (errorMessage.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   // send user's data to FireStore db
   Future<void> addUserDataToFirestore(
-      String name, String email, String nickname, String creditcard) async {
+      String name, String email, String category) async {
     // set connection to users collection
     CollectionReference users = FirebaseFirestore.instance.collection('users');
+    // get userID from firebaseAuth
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
 
     // create new doc of user. set unique ID
     await users.add({
+      'userId': userId,
       'name': name,
       'email': email,
-      'nickname': nickname,
-      'creditcard': creditcard
+      'category': category,
     });
   }
 
@@ -126,9 +143,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           color: lightColorScheme.primary,
                         ),
                       ),
+
+                      // divider
                       const SizedBox(
                         height: 40.0,
                       ),
+
                       // full name
                       TextFormField(
                         controller: _nameController,
@@ -158,38 +178,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
 
-                      TextFormField(
-                        controller: _nicknameController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a Nickname';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          label: const Text('Nickname'),
-                          hintText: 'Enter Nickname',
-                          hintStyle: const TextStyle(
-                            color: Colors.black26,
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
+                      // divider
                       const SizedBox(
                         height: 25.0,
                       ),
@@ -197,7 +187,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       // email
                       TextFormField(
                         // set pwd text field border to black after input submited
-
                         onFieldSubmitted: (value) {
                           setState(() {
                             _emailBorderColor = Colors.black26;
@@ -224,13 +213,15 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                       ),
+
+                      // divider
                       const SizedBox(
                         height: 25.0,
                       ),
+
                       // password
                       TextFormField(
                         // set pwd text field border to black after input submited
-
                         onFieldSubmitted: (value) {
                           setState(() {
                             _passwordBorderColor = Colors.black26;
@@ -267,83 +258,57 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                       ),
+
+                      // divider
                       const SizedBox(
                         height: 25.0,
                       ),
 
-                      TextFormField(
-                        // set credit card text field border to black after input submited
-
-                        onFieldSubmitted: (value) {
+                      DropdownButtonFormField<String>(
+                        value: _SelctedArea,
+                        items: categories.map((category) {
+                          return DropdownMenuItem<String>(
+                            value: category,
+                            child: Text(category),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
                           setState(() {
-                            _passwordBorderColor = Colors.black26;
+                            _SelctedArea = value;
                           });
                         },
-                        controller: _creditcardController,
-                        obscureText: true,
-                        obscuringCharacter: '*',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter credit card number';
-                          }
-                          return null;
-                        },
                         decoration: InputDecoration(
-                          label: const Text('credit card number'),
-                          hintText: 'Enter credit card number',
-                          hintStyle: const TextStyle(
+                          label: Text('Area'),
+                          hintText: 'Select a area',
+                          hintStyle: TextStyle(
                             color: Colors.black26,
                           ),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color:
-                                  _passwordBorderColor, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color:
-                                  _passwordBorderColor, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please select an area';
+                          }
+                          return null;
+                        },
                       ),
 
+                      // divider
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // i agree to the processing
-                      Row(
-                        children: [
-                          Checkbox(
-                            value: agreePersonalData,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                agreePersonalData = value!;
-                              });
-                            },
-                            activeColor: lightColorScheme.primary,
-                          ),
-                          const Text(
-                            'I agree to the processing of ',
-                            style: TextStyle(
-                              color: Colors.black45,
-                            ),
-                          ),
-                          Text(
-                            'Personal data',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: lightColorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+
                       // signup button
                       SizedBox(
                         width: double.infinity,
@@ -354,55 +319,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: const Text('Sign up'),
                         ),
                       ),
+
+                      // divider
                       const SizedBox(
                         height: 30.0,
                       ),
-                      // sign up divider
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
-                            child: Text(
-                              'Sign up with',
-                              style: TextStyle(
-                                color: Colors.black45,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      // sign up social media logo
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Logo(Logos.facebook_f),
-                          Logo(Logos.twitter),
-                          Logo(Logos.google),
-                          Logo(Logos.apple),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+
                       // already have an account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -433,6 +355,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ],
                       ),
+
+                      // divider
                       const SizedBox(
                         height: 20.0,
                       ),
