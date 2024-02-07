@@ -13,7 +13,12 @@ class CustomerSignUpPage extends StatefulWidget {
   State<CustomerSignUpPage> createState() => _CustomerSignUpPageState();
 }
 
-List<String> categories = ["Category 1", "Category 2", "Category 3"];
+List<String> categories = [
+  "Housekeeping",
+  "Babysitting",
+  "Dog-Sitting",
+  "Plumbering"
+];
 String? _SelctedArea; // variable to hold the selected category
 
 class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
@@ -136,7 +141,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                     children: [
                       // get started text
                       Text(
-                        'be new Helper',
+                        'Join our help community!',
                         style: TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.w900,
@@ -159,7 +164,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          label: const Text('Full Name'),
+                          label: const Text('Full Name*'),
                           hintText: 'Enter Full Name',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
@@ -194,7 +199,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                         },
                         controller: _emailController,
                         decoration: InputDecoration(
-                          label: const Text('Email'),
+                          label: const Text('Email*'),
                           hintText: 'Enter Email',
                           hintStyle: TextStyle(
                             color: Colors.black12,
@@ -237,7 +242,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          label: const Text('Password'),
+                          label: const Text('Password*'),
                           hintText: 'Enter Password',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
@@ -264,45 +269,46 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                         height: 25.0,
                       ),
 
-                      DropdownButtonFormField<String>(
-                        value: _SelctedArea,
-                        items: categories.map((category) {
-                          return DropdownMenuItem<String>(
-                            value: category,
-                            child: Text(category),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _SelctedArea = value;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          label: Text('Area'),
-                          hintText: 'Select a area',
-                          hintStyle: TextStyle(
-                            color: Colors.black26,
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black12,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black12,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select an area';
-                          }
-                          return null;
-                        },
-                      ),
+                      // //Category
+                      // DropdownButtonFormField<String>(
+                      //   value: _SelctedArea,
+                      //   items: categories.map((category) {
+                      //     return DropdownMenuItem<String>(
+                      //       value: category,
+                      //       child: Text(category),
+                      //     );
+                      //   }).toList(),
+                      //   onChanged: (value) {
+                      //     setState(() {
+                      //       _SelctedArea = value;
+                      //     });
+                      //   },
+                      //   decoration: InputDecoration(
+                      //     label: Text('Category*'),
+                      //     hintText: 'Select an area',
+                      //     hintStyle: TextStyle(
+                      //       color: Colors.black26,
+                      //     ),
+                      //     border: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Colors.black12,
+                      //       ),
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Colors.black12,
+                      //       ),
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //   ),
+                      //   validator: (value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Please select an area';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
 
                       // divider
                       const SizedBox(

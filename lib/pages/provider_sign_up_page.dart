@@ -14,7 +14,12 @@ class ProviderSignUpPage extends StatefulWidget {
   State<ProviderSignUpPage> createState() => _ProviderSignUpPageState();
 }
 
-List<String> categories = ["Category 1", "Category 2", "Category 3"];
+List<String> categories = [
+  "Housekeeping",
+  "Babysitting",
+  "Dog-Sitting",
+  "Plumbering"
+];
 String? _selectedCategory; // variable to hold the selected category
 
 class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
@@ -120,7 +125,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                     children: [
                       // get started text
                       Text(
-                        'be new Helper',
+                        'Be a new Helper!',
                         style: TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.w900,
@@ -143,7 +148,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          label: const Text('Full Name'),
+                          label: const Text('Full Name*'),
                           hintText: 'Enter Full Name',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
@@ -178,7 +183,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                         },
                         controller: _emailController,
                         decoration: InputDecoration(
-                          label: const Text('Email'),
+                          label: const Text('Email*'),
                           hintText: 'Enter Email',
                           hintStyle: TextStyle(
                             color: Colors.black12,
@@ -221,7 +226,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          label: const Text('Password'),
+                          label: const Text('Password*'),
                           hintText: 'Enter Password',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
@@ -248,46 +253,46 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                         height: 25.0,
                       ),
 
-                      // category; specialty
-                      DropdownButtonFormField<String>(
-                        value: _selectedCategory,
-                        items: categories.map((category) {
-                          return DropdownMenuItem<String>(
-                            value: category,
-                            child: Text(category),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedCategory = value;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          label: Text('Category'),
-                          hintText: 'Select a category',
-                          hintStyle: TextStyle(
-                            color: Colors.black26,
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black12,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black12,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please select a category';
-                          }
-                          return null;
-                        },
-                      ),
+                      // // category
+                      // DropdownButtonFormField<String>(
+                      //   value: _selectedCategory,
+                      //   items: categories.map((category) {
+                      //     return DropdownMenuItem<String>(
+                      //       value: category,
+                      //       child: Text(category),
+                      //     );
+                      //   }).toList(),
+                      //   onChanged: (value) {
+                      //     setState(() {
+                      //       _selectedCategory = value;
+                      //     });
+                      //   },
+                      //   decoration: InputDecoration(
+                      //     label: Text('I'm good at:*'),
+                      //     hintText: 'Select a category',
+                      //     hintStyle: TextStyle(
+                      //       color: Colors.black26,
+                      //     ),
+                      //     border: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Colors.black12,
+                      //       ),
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderSide: BorderSide(
+                      //         color: Colors.black12,
+                      //       ),
+                      //       borderRadius: BorderRadius.circular(10),
+                      //     ),
+                      //   ),
+                      //   validator: (value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Please select a category';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
 
                       // divider
                       const SizedBox(
