@@ -10,7 +10,7 @@ class ProviderUser extends AppUser {
     required String userId,
     required String name,
     required String email,
-    required String area,
+    //required String area,
     required int type,
     required this.profession,
     required this.rating,
@@ -18,7 +18,7 @@ class ProviderUser extends AppUser {
           userId: userId,
           name: name,
           email: email,
-          area: area,
+          //area: area,
           type: type,
         );
 
@@ -45,8 +45,8 @@ class ProviderUser extends AppUser {
           email: data['email'] ?? '',
           profession: data['proffesion'] ?? '',
           rating: double.parse(data['rating'] ?? '0'),
-          area: data['area'] ?? '',
-          type: data['type'] ?? '', 
+          // area: data['area'] ?? '',
+          type: data['type'] ?? '',
         );
 
         return user;

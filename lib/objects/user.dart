@@ -4,7 +4,7 @@ class AppUser {
   late String userId;
   late String name;
   late String email;
-  late String area;
+  //late String area;
   late int type;
 
   // // default constructor
@@ -15,7 +15,7 @@ class AppUser {
     required this.userId,
     required this.name,
     required this.email,
-    required this.area,
+    //required this.area,
     required this.type,
   });
 
@@ -23,7 +23,7 @@ class AppUser {
   AppUser.defaultUser()
       : userId = '',
         name = '',
-        area = '',
+        //area = '',
         email = '',
         type = 0;
 
@@ -35,8 +35,8 @@ class AppUser {
       userId: data['userId'] ?? '',
       name: data['name'] ?? '',
       email: data['email'] ?? '',
-      area: data['area'] ?? '',
-      type: data['type'] ?? 0, 
+      //area: data['area'] ?? '',
+      type: data['type'] ?? 0,
     );
   }
 
@@ -48,7 +48,7 @@ class AppUser {
       'userId': user.userId,
       'name': user.name,
       'email': user.email,
-      'area': user.area,
+      //'area': user.area,
       'type': user.type,
     });
   }

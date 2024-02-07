@@ -20,7 +20,7 @@ List<String> categories = [
   "Dog-Sitting",
   "Plumbering"
 ];
-String? _selectedCategory; // variable to hold the selected category
+//String? _selectedCategory; // variable to hold the selected category
 
 class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
@@ -47,8 +47,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
           password: _passwordController.text.trim());
 
       // store user data in 'users' firestore
-      addUserDataToFirestore(
-          _nameController.text, _emailController.text, _selectedCategory!);
+      addUserDataToFirestore(_nameController.text, _emailController.text);
 
       // Redirect to home page after successful sign-up
       Navigator.pushReplacement(
@@ -78,8 +77,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
   }
 
   // send user's data to FireStore db
-  Future<void> addUserDataToFirestore(
-      String name, String email, String category) async {
+  Future<void> addUserDataToFirestore(String name, String email) async {
     // set connection to users collection
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     // get userID from firebaseAuth
@@ -90,7 +88,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
       'userId': userId,
       'name': name,
       'email': email,
-      'category': category,
+      //'category': category,
     });
   }
 

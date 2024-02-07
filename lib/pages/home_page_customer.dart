@@ -5,7 +5,6 @@ import 'package:help_app/pages/service_call_page.dart';
 import 'package:help_app/widgets/call_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class HomePageCustomer extends StatefulWidget {
   const HomePageCustomer({Key? key}) : super(key: key);
 
@@ -53,7 +52,8 @@ class HomePageCustomerState extends State<HomePageCustomer> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ServiceCallPage(), // Replace with your actual screen
+              builder: (context) =>
+                  ServiceCallPage(), // Replace with your actual screen
             ),
           );
         },
@@ -135,23 +135,23 @@ class HomePageCustomerState extends State<HomePageCustomer> {
         ],
         onTap: (index) {
           switch (index) {
-    case 0:
-      // Handle tapping on the Home button if needed
-      break;
-    case 1:
-      // Handle tapping on the Profile button
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProviderProfile(), // Replace with the actual ProfileProvider widget
-        ),
-      );
-      break;
-    case 2:
-      // Handle tapping on the History button if needed
-      break;
-  }
-
+            case 0:
+              // Handle tapping on the Home button if needed
+              break;
+            case 1:
+              // Handle tapping on the Profile button
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ProviderProfile(), // Replace with the actual ProfileProvider widget
+                ),
+              );
+              break;
+            case 2:
+              // Handle tapping on the History button if needed
+              break;
+          }
         },
       ),
     );

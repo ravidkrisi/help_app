@@ -19,7 +19,7 @@ List<String> categories = [
   "Dog-Sitting",
   "Plumbering"
 ];
-String? _SelctedArea; // variable to hold the selected category
+//String? _SelctedArea; // variable to hold the selected category
 
 class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
@@ -51,11 +51,9 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
 
       // Store user data in Firestore
       if (userCredential.user != null) {
-        await addUserDataToFirestore(
-          _nameController.text,
-          _emailController.text,
-          _SelctedArea!,
-        );
+        await addUserDataToFirestore(_nameController.text, _emailController.text
+            //_SelctedArea!,
+            );
 
         // Redirect to home page after successful sign-up
         Navigator.pushReplacement(
@@ -94,8 +92,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
   }
 
   // send user's data to FireStore db
-  Future<void> addUserDataToFirestore(
-      String name, String email, String category) async {
+  Future<void> addUserDataToFirestore(String name, String email) async {
     // set connection to users collection
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     // get userID from firebaseAuth
@@ -106,7 +103,6 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
       'userId': userId,
       'name': name,
       'email': email,
-      'category': category,
     });
   }
 

@@ -70,7 +70,7 @@ class HomePageProviderState extends State<HomePageProvider> {
                           });
                         },
                       ),
-                      SizedBox(width: 20),
+                      SizedBox(width: 1),
                       Text("Category: "),
                       DropdownButton<String>(
                         value: selectedCategory,
