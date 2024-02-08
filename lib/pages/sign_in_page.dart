@@ -81,7 +81,7 @@ class _SignInPageState extends State<SignInPage> {
       children: [
         const Expanded(flex: 2, child: SizedBox(height: 10)),
         Expanded(
-            flex: 6,
+            flex: 5,
             child: Container(
               padding: const EdgeInsets.fromLTRB(25, 50, 25, 20),
               decoration: const BoxDecoration(
