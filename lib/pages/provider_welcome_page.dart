@@ -31,8 +31,8 @@ class ProviderWelcomePage extends StatelessWidget {
                     child: Text(
                       "Are you a customer? Click here",
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                        color: Colors.black,
+                        fontSize: 26,
                       ),
                     ),
                   ),

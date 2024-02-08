@@ -22,8 +22,6 @@ class ServiceCall {
     required this.description,
     required this.cost,
     required this.isCompleted,
-    required this.rating,
-    required this.reviewDesc,
   });
 
   // Function to add user data to Firestore
@@ -39,8 +37,6 @@ class ServiceCall {
       'description': call.description,
       'cost': call.cost,
       'isCompleted': false,
-      'rating': null,
-      'reviewDesc': null,
     }).then((value) {
       // Document added successfully
       print('Data stored in Firestore!');
@@ -77,8 +73,6 @@ class ServiceCall {
           description: data['description'] ?? '',
           cost: data['cost'] ?? '',
           isCompleted: data['isCompleted'] ?? false,
-          rating: data['rating'] ?? 0,
-          reviewDesc: data['reviewDesc'] ?? '',
         );
 
         return serviceCall;
@@ -142,7 +136,8 @@ class ServiceCall {
   }
 
   // Function to retrieve all posts and create a list of Post instances
-  static Future<List<ServiceCall?>> getAllCustomerPosts(String customerID) async {
+  static Future<List<ServiceCall?>> getAllCustomerPosts(
+      String customerID) async {
     QuerySnapshot callsSnapshot = await FirebaseFirestore.instance
         .collection('service_calls')
         .where('customerID', isEqualTo: customerID)

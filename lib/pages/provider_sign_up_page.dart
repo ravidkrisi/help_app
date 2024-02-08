@@ -26,7 +26,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
 
-  // create instance of firenase authenticator
+  // create instance of firebase authenticator
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // controllers for user input
@@ -38,13 +38,15 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
   Color _emailBorderColor = Colors.black26;
   Color _passwordBorderColor = Colors.black26;
 
-  // send user email and password to FireBase Auth
+  // send user email and password to Firebase Auth
   Future<void> _signUpFunc(BuildContext context) async {
+    String errorMessage = '';
     try {
       // sign up the user
       await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
       // store user data in 'users' firestore
       addUserDataToFirestore(_nameController.text, _emailController.text);
@@ -52,13 +54,18 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
       // Redirect to home page after successful sign-up
       Navigator.pushReplacement(
         context,
-        // ignore: prefer_const_constructors
         MaterialPageRoute(builder: (context) => HomePageProvider()),
       );
-    }
-    // catch invalid sign up arguments
-    on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       // invalid email address
+      if (e.code == 'email-already-in-use') {
+        // Set border color of email field to red
+        setState(() {
+          _emailBorderColor = Colors.red;
+          errorMessage =
+              'Email is already in use. Please enter a different email.';
+        });
+      }
       if (e.code == 'invalid-email') {
         setState(() {
           _emailBorderColor = Colors.red;
@@ -68,15 +75,20 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
           _passwordBorderColor = Colors.red;
         });
       }
+    } catch (e) {
+      print("Error during sign up: $e");
     }
-    // handle errors
-    catch (e) {
-      // ignore: avoid_print
-      print("error during sign up $e");
+    if (errorMessage.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
-  // send user's data to FireStore db
+  // send user's data to Firestore db
   Future<void> addUserDataToFirestore(String name, String email) async {
     // set connection to users collection
     CollectionReference users = FirebaseFirestore.instance.collection('users');
@@ -88,7 +100,6 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
       'userId': userId,
       'name': name,
       'email': email,
-      //'category': category,
     });
   }
 
@@ -199,6 +210,17 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter an email address';
+                          }
+                          // Email format validation
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email address';
+                          }
+                          return null;
+                        },
                       ),
 
                       // divider
@@ -219,7 +241,11 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                         obscuringCharacter: '*',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Password';
+                            return 'Please enter a password';
+                          }
+                          // Password strength validation
+                          if (value.length < 6) {
+                            return 'Password should be at least 6 characters';
                           }
                           return null;
                         },
@@ -251,58 +277,14 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                         height: 25.0,
                       ),
 
-                      // // category
-                      // DropdownButtonFormField<String>(
-                      //   value: _selectedCategory,
-                      //   items: categories.map((category) {
-                      //     return DropdownMenuItem<String>(
-                      //       value: category,
-                      //       child: Text(category),
-                      //     );
-                      //   }).toList(),
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       _selectedCategory = value;
-                      //     });
-                      //   },
-                      //   decoration: InputDecoration(
-                      //     label: Text('I'm good at:*'),
-                      //     hintText: 'Select a category',
-                      //     hintStyle: TextStyle(
-                      //       color: Colors.black26,
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Colors.black12,
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Colors.black12,
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //   ),
-                      //   validator: (value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please select a category';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
-
-                      // divider
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-
                       // signup button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await _signUpFunc(context);
+                            if (_formSignupKey.currentState!.validate()) {
+                              await _signUpFunc(context);
+                            }
                           },
                           child: const Text('Sign up'),
                         ),

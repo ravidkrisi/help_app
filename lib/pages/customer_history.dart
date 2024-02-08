@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:help_app/objects/service_call.dart';
-import 'package:help_app/pages/provider_profile.dart';
-import 'package:help_app/pages/customer_history.dart';
-import 'package:help_app/pages/service_call_page.dart';
-import 'package:help_app/widgets/call_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/pages/provider_profile.dart';
+import 'package:help_app/objects/provider_user.dart';
+import 'package:help_app/objects/user.dart';
+import 'package:help_app/widgets/call_card.dart';
+import 'package:help_app/pages/service_call_page.dart';
+import 'package:help_app/pages/customer_welcome_page.dart';
+import 'package:help_app/pages/home_page_customer.dart'; // Import HomePageProvider page
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-String? userId = FirebaseAuth.instance.currentUser?.uid;
+import 'package:help_app/objects/service_call.dart';
 
-class HomePageCustomer extends StatefulWidget {
-  const HomePageCustomer({Key? key}) : super(key: key);
+class HistoryPage extends StatefulWidget {
+  final String customerId;
+
+  const HistoryPage({Key? key, required this.customerId}) : super(key: key);
 
   @override
-  State<HomePageCustomer> createState() => HomePageCustomerState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class HomePageCustomerState extends State<HomePageCustomer> {
+class _HistoryPageState extends State<HistoryPage> {
   bool _isLoading = true;
   List<ServiceCall?> allCalls = [];
 
@@ -28,7 +33,7 @@ class HomePageCustomerState extends State<HomePageCustomer> {
   Future<void> fetchCalls() async {
     try {
       List<ServiceCall?> calls = await ServiceCall.getAllCustomerPosts(userId!);
-      calls = calls.where((call) => call?.isCompleted == false).toList();
+      calls = calls.where((call) => call?.isCompleted == true).toList();
       setState(() {
         allCalls = calls;
         _isLoading = false;
@@ -40,27 +45,16 @@ class HomePageCustomerState extends State<HomePageCustomer> {
     }
   }
 
-  Future<void> _refreshHomePage() async {
-    setState(() {
-      _isLoading = true;
-    });
-    await fetchCalls();
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Posts"),
+        title: Text('History'),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            onPressed: _refreshHomePage,
+            onPressed: fetchCalls,
             icon: Icon(Icons.refresh),
-            tooltip: 'Refresh',
           ),
         ],
       ),
@@ -69,7 +63,7 @@ class HomePageCustomerState extends State<HomePageCustomer> {
           : allCalls.isEmpty
               ? Center(
                   child: Text(
-                    'No posts available.',
+                    'No completed service calls found.',
                     style: TextStyle(fontSize: 24),
                   ),
                 )
@@ -97,6 +91,7 @@ class HomePageCustomerState extends State<HomePageCustomer> {
         onTap: (index) {
           switch (index) {
             case 0:
+              // Handle tapping on the Home button if needed
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -105,6 +100,7 @@ class HomePageCustomerState extends State<HomePageCustomer> {
               );
               break;
             case 1:
+              // Handle tapping on the Profile button
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -113,28 +109,17 @@ class HomePageCustomerState extends State<HomePageCustomer> {
               );
               break;
             case 2:
-              Navigator.push(
+              // Handle tapping on the History button
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      HistoryPage(customerId: userId.toString()),
+                      HistoryPage(customerId: widget.customerId),
                 ),
               );
               break;
           }
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ServiceCallPage(),
-            ),
-          );
-        },
-        tooltip: 'Add Post',
-        child: Icon(Icons.add),
       ),
     );
   }

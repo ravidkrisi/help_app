@@ -1,77 +1,136 @@
 import 'package:flutter/material.dart';
 import 'package:help_app/objects/service_call.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:help_app/pages/review_page.dart'; // Import LeaveReviewPage
 
-class CallCard extends StatelessWidget {
+String? ProviderId = FirebaseAuth.instance.currentUser?.uid;
+
+class CallCard extends StatefulWidget {
   final ServiceCall? call;
 
   const CallCard({required this.call, Key? key}) : super(key: key);
 
   @override
+  _CallCardState createState() => _CallCardState();
+}
+
+class _CallCardState extends State<CallCard> {
+  @override
   Widget build(BuildContext context) {
-    // Widget representing a card for displaying service call information
-    return Card(
-      elevation: 5, // Add a shadow effect to the card
-      margin: EdgeInsets.all(16), // Add space around the card
-      child: Padding(
-        padding: EdgeInsets.all(16), // Add padding to the contents of the card
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Row for displaying status indicator and category
-            Row(
-              children: [
-                _buildStatusIndicator(
-                    call?.isCompleted), // Display status indicator
-                SizedBox(
-                    width:
-                        8), // Add a small space between status indicator and category
-                Text(
-                  call?.category ??
-                      '', // Display the category of the service call
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight
-                          .bold), // Apply styling to the category text
-                ),
-              ],
+    return FutureBuilder<int?>(
+      future: getUserType(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          print('Error fetching user type: ${snapshot.error}');
+          return Text('Error fetching user type');
+        } else {
+          final userType = snapshot.data;
+          print('User type: $userType');
+          return Card(
+            elevation: 5,
+            margin: EdgeInsets.all(16),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      _buildStatusIndicator(widget.call?.isCompleted),
+                      SizedBox(width: 8),
+                      Text(
+                        widget.call?.category ?? '',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Text("Location: ${widget.call?.area}"),
+                  SizedBox(height: 10),
+                  Text("Price: \$${widget.call?.cost}"),
+                  SizedBox(height: 25),
+                  Text(widget.call?.description ?? ''),
+                  SizedBox(height: 16),
+                  if (widget.call?.isCompleted == true ||
+                      userType == 1) // Add condition to show Review button
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LeaveReviewPage(
+                                serviceCallId:
+                                    widget.call!.serviceCallId.toString()),
+                          ),
+                        );
+                      },
+                      child: Text("Review"),
+                    ),
+                  if (widget.call?.isCompleted != true)
+                    ElevatedButton(
+                      onPressed: widget.call?.isCompleted == true
+                          ? null
+                          : () async {
+                              if (widget.call?.isCompleted == false) {
+                                await FirebaseFirestore.instance
+                                    .collection('service_calls')
+                                    .doc(widget.call?.serviceCallId)
+                                    .update({
+                                  'isCompleted': true,
+                                  'providerID': ProviderId,
+                                });
+                                _buildStatusIndicator(widget.call?.isCompleted);
+                                print(
+                                    "Take Job button pressed for ${widget.call?.category}");
+                              }
+                            },
+                      child: Text("Take Job"),
+                    ),
+                ],
+              ),
             ),
-            SizedBox(height: 10), // Add vertical spacing
-            Text(
-                "Location: ${call?.area}"), // Display the location of the service call
-            SizedBox(height: 10), // Add vertical spacing
-            Text(
-                "Price: \$${call?.cost}"), // Display the cost of the service call
-            SizedBox(height: 25), // Add vertical spacing
-            Text(call?.description ??
-                ''), // Display the description of the service call
-            SizedBox(height: 16), // Add vertical spacing
-          ],
-        ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildStatusIndicator(bool? isCompleted) {
+    Color ind_color = Colors.black;
+    if (isCompleted == null) {
+      ind_color = Colors.grey;
+    } else if (isCompleted == true) {
+      ind_color = Colors.red;
+    } else if (isCompleted == false) {
+      ind_color = Colors.green;
+    }
+    return Container(
+      width: 12,
+      height: 12,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: ind_color,
       ),
     );
   }
-}
 
-// Helper method for building a status indicator based on isOpen
-Widget _buildStatusIndicator(bool? isCompleted) {
-  Color ind_color = Colors.black; // Default color for the status indicator
-
-  // Check the value of isOpen and set the color accordingly
-  if (isCompleted == null) {
-    ind_color = Colors.grey; // Grey for null
-  } else if (isCompleted == true) {
-    ind_color = Colors.red; // Green for true
-  } else if (isCompleted == false) {
-    ind_color = Colors.green; // Red for false
+  Future<int?> getUserType() async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final idTokenResult = await user.getIdTokenResult();
+        final Map<String, dynamic>? claims = idTokenResult.claims;
+        return claims?['type'] as int?;
+      }
+    } catch (e) {
+      print('Error getting user type: $e');
+    }
+    return null;
   }
-
-  // Return a circular status indicator with the determined color
-  return Container(
-    width: 12,
-    height: 12,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: ind_color,
-    ),
-  );
 }

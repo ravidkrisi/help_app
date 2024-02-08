@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:help_app/objects/service_call.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
+import 'package:help_app/objects/review.dart'; // Import the Review class
 
 class LeaveReviewPage extends StatefulWidget {
   final String serviceCallId;
@@ -153,10 +153,25 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
       if (call != null) {
         int rating = formData['rating'];
         String reviewDesc = formData['reviewDesc'];
-        // call service_call function to update review
-        call.updateReview(rating, reviewDesc);
+
+        // Create a new Review object
+        Review review = Review(
+          reviewId: '', // Assign a unique review ID if needed
+          customerID: call
+              .customer, // Assuming you have a customer associated with the service call
+          providerID: call
+              .provider, // Assuming you have a provider associated with the service call
+          serviceCallID: call,
+          rating: rating,
+          reviewDesc: reviewDesc,
+        );
+
+        // Call the method to add review data to Firestore
+        await Review.addReviewDataToFirestore(review);
+
+        // Navigate back to the HistoryPage
+        Navigator.pop(context);
       }
-      // call service_call function to update review
     }
   }
 }

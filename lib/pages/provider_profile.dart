@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:help_app/objects/provider_user.dart';
-import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/customer_welcome_page.dart';
 import 'package:help_app/pages/home_page_provider.dart'; // Import HomePageProvider page
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderProfile extends StatefulWidget {
   const ProviderProfile({Key? key}) : super(key: key);
@@ -13,8 +12,9 @@ class ProviderProfile extends StatefulWidget {
 }
 
 class _ProviderProfileState extends State<ProviderProfile> {
-  String? _uid;
-  ProviderUser? _user;
+  String? _name;
+  String? _profession;
+  double? _rating;
 
   @override
   void initState() {
@@ -23,14 +23,13 @@ class _ProviderProfileState extends State<ProviderProfile> {
   }
 
   Future<void> checkCurrentUser() async {
-    String? userId = FirebaseAuth.instance.currentUser?.uid;
-    ProviderUser? providerUser = await ProviderUser.getUserById(userId!);
+    final User? user = FirebaseAuth.instance.currentUser;
 
-    if (userId.isNotEmpty) {
+    if (user != null) {
       setState(() {
-        _uid = userId;
-        _user = providerUser;
+        _name = user.displayName;
       });
+      print('User Name: $_name');
     } else {
       print("User not logged in");
     }
@@ -61,22 +60,17 @@ class _ProviderProfileState extends State<ProviderProfile> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  _user?.name ?? 'NA',
+                  _name ?? 'NA', // Display user's name
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 10),
+                _buildBoldTextWithStars('Profession:', _profession ?? 'NA'),
+                SizedBox(height: 10),
                 _buildBoldTextWithStars(
-                    'proffesion:', _user?.profession ?? 'NA'),
-                SizedBox(height: 10),
-                // _buildBoldTextWithStars('Area:', _user?.area ?? 'NA'),
-                // SizedBox(height: 10),
-                _buildBoldTextWithStars('Rating:',
-                    _user?.rating.toString() ?? '1.1'), // Changed here
-                SizedBox(height: 10),
-                // _buildBoldTextWithStars('Recommendations:', first.recommendations),
+                    'Rating:', _rating?.toString() ?? '1.1'),
                 SizedBox(height: 20), // Added space from top
               ],
             ),
