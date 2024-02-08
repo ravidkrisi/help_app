@@ -49,8 +49,7 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
       );
 
       // store user data in 'users' firestore
-      addUserDataToFirestore(
-          _nameController.text, _emailController.text, _selectedCategory!);
+      addUserDataToFirestore(_nameController.text, _emailController.text);
 
       // Redirect to home page after successful sign-up
       Navigator.pushReplacement(
