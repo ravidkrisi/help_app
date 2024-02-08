@@ -81,9 +81,9 @@ class _SignInPageState extends State<SignInPage> {
       children: [
         const Expanded(flex: 2, child: SizedBox(height: 10)),
         Expanded(
-            flex: 5,
+            flex: 7,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 50, 25, 20),
+              padding: const EdgeInsets.fromLTRB(25, 80, 25, 20),
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -95,7 +95,6 @@ class _SignInPageState extends State<SignInPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-
                         // header
                         Text(
                           'Welcome back to HELPAPP',
@@ -135,9 +134,12 @@ class _SignInPageState extends State<SignInPage> {
                                 borderRadius: BorderRadius.circular(10),
                               )),
                         ),
+
+                        // divider
                         const SizedBox(
                           height: 25.0,
                         ),
+
                         // password textfield
                         TextFormField(
                           controller: _passwordController,
@@ -169,45 +171,52 @@ class _SignInPageState extends State<SignInPage> {
                             ),
                           ),
                         ),
+
+                        // *** handle later
+                        // // divider
+                        // const SizedBox(
+                        //   height: 25.0,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Row(
+                        //       children: [
+                        //         Checkbox(
+                        //           value: rememberPassword,
+                        //           onChanged: (bool? value) {
+                        //             setState(() {
+                        //               rememberPassword = value!;
+                        //             });
+                        //           },
+                        //           activeColor: lightColorScheme.primary,
+                        //         ),
+                        //         const Text(
+                        //           'Remember me',
+                        //           style: TextStyle(
+                        //             color: Colors.black45,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     GestureDetector(
+                        //       child: Text(
+                        //         'Forget password?',
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.bold,
+                        //           color: lightColorScheme.primary,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+
+                        // divider
                         const SizedBox(
                           height: 25.0,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: rememberPassword,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      rememberPassword = value!;
-                                    });
-                                  },
-                                  activeColor: lightColorScheme.primary,
-                                ),
-                                const Text(
-                                  'Remember me',
-                                  style: TextStyle(
-                                    color: Colors.black45,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            GestureDetector(
-                              child: Text(
-                                'Forget password?',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: lightColorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
+
+                        // sign in button
                         GestureDetector(
                           onTap: signInFunc,
                           child: Container(
@@ -226,106 +235,8 @@ class _SignInPageState extends State<SignInPage> {
                             )),
                           ),
                         ),
-                        // GestureDetector(
-                        //   onTap: signInFunc,
-                        //   child: SizedBox(
-                        //     width: double.infinity,
-                        //     child: ElevatedButton(
-                        //       onPressed: () {
-                        //         if (_formSignInKey.currentState!.validate() &&
-                        //             rememberPassword) {
-                        //           ScaffoldMessenger.of(context).showSnackBar(
-                        //             const SnackBar(
-                        //               content: Text('Processing Data'),
-                        //             ),
-                        //           );
-                        //         } else if (!rememberPassword) {
-                        //           ScaffoldMessenger.of(context).showSnackBar(
-                        //             const SnackBar(
-                        //                 content: Text(
-                        //                     'Please agree to the processing of personal data')),
-                        //           );
-                        //         }
-                        //       },
-                        //       child: const Text('Sign in'),
-                        //     ),
-                        //   ),
-                        // ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                thickness: 0.7,
-                                color: Colors.grey.withOpacity(0.5),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 0,
-                                horizontal: 10,
-                              ),
-                              child: Text(
-                                'Sign up with',
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                thickness: 0.7,
-                                color: Colors.grey.withOpacity(0.5),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Logo(Logos.facebook_f),
-                            Logo(Logos.twitter),
-                            Logo(Logos.google),
-                            Logo(Logos.apple),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Don\'t have an account? ',
-                              style: TextStyle(
-                                color: Colors.black45,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (e) => const CustomerSignUpPage(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Sign up',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: lightColorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+
+                        // divider
                         const SizedBox(
                           height: 25.0,
                         ),
