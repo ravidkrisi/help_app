@@ -42,7 +42,7 @@ class SignInAuth extends StatelessWidget {
                   } else if (curr_user != null && curr_user.type == 1) {
                     return const HomePageCustomer();
                   } else {
-                    return const CustomerWelcomePage();
+                    return const SignInPage();
                   }
                 } else {
                   return const SignInPage();
