@@ -18,88 +18,49 @@ class CallCard extends StatefulWidget {
 class _CallCardState extends State<CallCard> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<int?>(
-      future: getUserType(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          print('Error fetching user type: ${snapshot.error}');
-          return Text('Error fetching user type');
-        } else {
-          final userType = snapshot.data;
-          print('User type: $userType');
-          return Card(
-            elevation: 5,
-            margin: EdgeInsets.all(16),
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      _buildStatusIndicator(widget.call?.isCompleted),
-                      SizedBox(width: 8),
-                      Text(
-                        widget.call?.category ?? '',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Text("Location: ${widget.call?.area}"),
-                  SizedBox(height: 10),
-                  Text("Price: \$${widget.call?.cost}"),
-                  SizedBox(height: 25),
-                  Text(widget.call?.description ?? ''),
-                  SizedBox(height: 16),
-                  if (widget.call?.isCompleted == true ||
-                      userType == 1) // Add condition to show Review button
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LeaveReviewPage(
-                                serviceCallId:
-                                    widget.call!.serviceCallId.toString()),
-                          ),
-                        );
-                      },
-                      child: Text("Review"),
-                    ),
-                  if (widget.call?.isCompleted != true)
-                    ElevatedButton(
-                      onPressed: widget.call?.isCompleted == true
-                          ? null
-                          : () async {
-                              if (widget.call?.isCompleted == false) {
-                                await FirebaseFirestore.instance
-                                    .collection('service_calls')
-                                    .doc(widget.call?.serviceCallId)
-                                    .update({
-                                  'isCompleted': true,
-                                  'providerID': ProviderId,
-                                });
-                                _buildStatusIndicator(widget.call?.isCompleted);
-                                print(
-                                    "Take Job button pressed for ${widget.call?.category}");
-                              }
-                            },
-                      child: Text("Take Job"),
-                    ),
-                ],
-              ),
+    // Widget representing a card for displaying service call information
+    return Card(
+      elevation: 5, // Add a shadow effect to the card
+      margin: EdgeInsets.all(16), // Add space around the card
+      child: Padding(
+        padding: EdgeInsets.all(16), // Add padding to the contents of the card
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Row for displaying status indicator and category
+            Row(
+              children: [
+                _buildStatusIndicator(
+                    call?.isCompleted), // Display status indicator
+                SizedBox(
+                    width:
+                        8), // Add a small space between status indicator and category
+                Text(
+                  call?.category ??
+                      '', // Display the category of the service call
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight
+                          .bold), // Apply styling to the category text
+                ),
+              ],
             ),
-          );
-        }
-      },
+            SizedBox(height: 10), // Add vertical spacing
+            Text(
+                "Location: ${call?.area}"), // Display the location of the service call
+            SizedBox(height: 10), // Add vertical spacing
+            Text(
+                "Price: \$${call?.cost}"), // Display the cost of the service call
+            SizedBox(height: 25), // Add vertical spacing
+            Text(call?.description ??
+                ''), // Display the description of the service call
+            SizedBox(height: 16), // Add vertical spacing
+          ],
+        ),
+      ),
     );
   }
+}
 
   Widget _buildStatusIndicator(bool? isCompleted) {
     Color ind_color = Colors.black;
