@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderUser extends AppUser {
   late String profession;
-  late double rating;
+  late num rating;
 
   ProviderUser({
     required String userId,
@@ -44,9 +44,9 @@ class ProviderUser extends AppUser {
           name: data['name'] ?? '',
           email: data['email'] ?? '',
           profession: data['proffesion'] ?? '',
-          rating: double.parse(data['rating'] ?? '0'),
+          rating: data['rating'] ?? '0',
           // area: data['area'] ?? '',
-          type: data['type'] ?? '',
+          type: data['type'] ?? 0,
         );
 
         return user;
@@ -57,5 +57,20 @@ class ProviderUser extends AppUser {
       print('Error retrieving user data: $error');
       return null;
     }
+  }
+
+  // send user data to firestore
+  static Future<void> addUserDataToFirestore(
+      String name, String email, String userId, int type, num rating) async {
+    // set connection to users collection
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    await users.add({
+      'userId': userId,
+      'name': name,
+      'email': email,
+      'type': type,
+      'rating': rating,
+    });
   }
 }

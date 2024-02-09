@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/objects/provider_user.dart';
+import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/customer_welcome_page.dart';
 import 'package:help_app/pages/home_page_provider.dart'; // Import HomePageProvider page
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderProfile extends StatefulWidget {
   const ProviderProfile({Key? key}) : super(key: key);
@@ -12,9 +13,8 @@ class ProviderProfile extends StatefulWidget {
 }
 
 class _ProviderProfileState extends State<ProviderProfile> {
-  String? _name;
-  String? _profession;
-  double? _rating;
+  String? _uid;
+  ProviderUser? _user;
 
   @override
   void initState() {
@@ -23,13 +23,15 @@ class _ProviderProfileState extends State<ProviderProfile> {
   }
 
   Future<void> checkCurrentUser() async {
-    final User? user = FirebaseAuth.instance.currentUser;
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+    ProviderUser? providerUser = await ProviderUser.getUserById(userId!);
 
-    if (user != null) {
+    if (userId.isNotEmpty) {
       setState(() {
-        _name = user.displayName;
+        _uid = userId;
+        _user = providerUser;
+        // print(_user?.rating);
       });
-      print('User Name: $_name');
     } else {
       print("User not logged in");
     }
@@ -39,7 +41,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Service Provider Profile'),
+        title: Text('Profile'),
       ),
       body: Column(
         children: [
@@ -60,17 +62,21 @@ class _ProviderProfileState extends State<ProviderProfile> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  _name ?? 'NA', // Display user's name
+                  _user?.name ?? 'NA',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 10),
-                _buildBoldTextWithStars('Profession:', _profession ?? 'NA'),
+                _buildBoldText('proffesion:', _user?.profession ?? 'NA'),
+                SizedBox(height: 10),
+                // _buildBoldText('Area:', _user?.area ?? 'NA'),
                 SizedBox(height: 10),
                 _buildBoldTextWithStars(
-                    'Rating:', _rating?.toString() ?? '1.1'),
+                    'Rating:', _user?.rating ?? 1.1), // Changed here
+                SizedBox(height: 10),
+                // _buildBoldTextWithStars('Recommendations:', first.recommendations),
                 SizedBox(height: 20), // Added space from top
               ],
             ),
@@ -90,9 +96,9 @@ class _ProviderProfileState extends State<ProviderProfile> {
     );
   }
 
-  Widget _buildStarRating(double rating) {
+  Widget _buildStarRating(num rating) {
     int fullStars = rating.floor();
-    double halfStar = rating - fullStars;
+    num halfStar = rating - fullStars;
 
     List<Widget> stars = [];
 
@@ -141,7 +147,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
     );
   }
 
-  Widget _buildBoldTextWithStars(String label, String text) {
+  Widget _buildBoldTextWithStars(String label, num rating) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -152,17 +158,10 @@ class _ProviderProfileState extends State<ProviderProfile> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(width: 5),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
+
         SizedBox(width: 5),
         if (label == 'Rating:')
-          _buildStarRating(
-              double.parse(text)), // Display stars if label is 'Rating:'
+          _buildStarRating(rating), // Display stars if label is 'Rating:'
       ],
     );
   }

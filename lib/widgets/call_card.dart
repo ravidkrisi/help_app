@@ -8,8 +8,10 @@ String? ProviderId = FirebaseAuth.instance.currentUser?.uid;
 
 class CallCard extends StatefulWidget {
   final ServiceCall? call;
+  final int role_type; // 0: non btn 1: 'take job 2:'leave review'
 
-  const CallCard({required this.call, Key? key}) : super(key: key);
+  const CallCard({required this.call, required this.role_type, Key? key})
+      : super(key: key);
 
   @override
   _CallCardState createState() => _CallCardState();
@@ -57,41 +59,75 @@ class _CallCardState extends State<CallCard> {
                   SizedBox(height: 25),
                   Text(widget.call?.description ?? ''),
                   SizedBox(height: 16),
-                  if (widget.call?.isCompleted == true ||
-                      userType == 1) // Add condition to show Review button
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LeaveReviewPage(
-                                serviceCallId:
-                                    widget.call!.serviceCallId.toString()),
-                          ),
-                        );
-                      },
-                      child: Text("Review"),
-                    ),
-                  if (widget.call?.isCompleted != true)
-                    ElevatedButton(
-                      onPressed: widget.call?.isCompleted == true
-                          ? null
-                          : () async {
-                              if (widget.call?.isCompleted == false) {
-                                await FirebaseFirestore.instance
-                                    .collection('service_calls')
-                                    .doc(widget.call?.serviceCallId)
-                                    .update({
-                                  'isCompleted': true,
-                                  'providerID': ProviderId,
-                                });
-                                _buildStatusIndicator(widget.call?.isCompleted);
-                                print(
-                                    "Take Job button pressed for ${widget.call?.category}");
-                              }
-                            },
-                      child: Text("Take Job"),
-                    ),
+
+                  // if (widget.call?.isCompleted == true ||
+                  //     userType == 1) // Add condition to show Review button
+                  //   ElevatedButton(
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           builder: (context) => LeaveReviewPage(
+                  //               serviceCallId:
+                  //                   widget.call!.serviceCallId.toString()),
+                  //         ),
+                  //       );
+                  //     },
+                  //     child: Text("Review"),
+                  //   ),
+
+                  // take job
+                  (widget.call?.isCompleted != true && widget.role_type == 1)
+                      ? ElevatedButton(
+                          onPressed: widget.call?.isCompleted == true
+                              ? null
+                              : () async {
+                                  if (widget.call?.isCompleted == false) {
+                                    await FirebaseFirestore.instance
+                                        .collection('service_calls')
+                                        .doc(widget.call?.serviceCallId)
+                                        .update({
+                                      'isCompleted': true,
+                                      'providerID': ProviderId,
+                                    });
+                                    _buildStatusIndicator(
+                                        widget.call?.isCompleted);
+                                    print(
+                                        "Take Job button pressed for ${widget.call?.category}");
+                                  }
+                                },
+                          child: Text("Take Job"),
+                        )
+
+                      // leave review button
+                      : (widget.call?.isCompleted == true &&
+                              widget.role_type == 2 &&
+                              widget.call?.isReviewed == false)
+                          ? ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LeaveReviewPage(
+                                        serviceCallId: widget
+                                            .call!.serviceCallId
+                                            .toString()),
+                                  ),
+                                );
+                              },
+                              child: Text("leave review"),
+                            )
+                          : (widget.call?.isCompleted == true &&
+                                  widget.role_type == 2 &&
+                                  widget.call?.isReviewed == true)
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    // handle this review button
+                                  },
+                                  child: Text("see review"),
+                                )
+                              // else no button
+                              : Container(),
                 ],
               ),
             ),

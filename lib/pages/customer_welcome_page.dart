@@ -28,10 +28,12 @@ class CustomerWelcomePage extends StatelessWidget {
                           builder: (context) => ProviderWelcomePage()),
                     ),
                     child: Text(
-                      "Are you a provider? Click here",
+                      "Are you a provider?\n Click here",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 28,
+                        backgroundColor: Colors.white,
                       ),
                     ),
                   ),

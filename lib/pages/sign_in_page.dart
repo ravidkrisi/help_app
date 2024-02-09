@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/customer_sign_up_page.dart';
 import 'package:help_app/pages/home_page_customer.dart';
+import 'package:help_app/pages/home_page_provider.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -34,9 +36,21 @@ class _SignInPageState extends State<SignInPage> {
 
       // If sign-in is successful, navigate to home page
       if (userCredential.user != null) {
+        // check the role of the user
+        String? userId = FirebaseAuth.instance.currentUser?.uid;
+        AppUser? curr_user = await AppUser.getUserById(userId);
+        int type = 0;
+
+        if (curr_user != null) {
+          type = curr_user.type;
+          print(type);
+        }
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePageCustomer()),
+          MaterialPageRoute(
+              builder: (context) =>
+                  (type == 2) ? HomePageCustomer() : HomePageProvider()),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -56,13 +70,13 @@ class _SignInPageState extends State<SignInPage> {
       print("Error during sign in: $e");
 
       // Show a generic error message in a snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              Text('An error occurred during sign-in. Please try again later.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content:
+      //         Text('An error occurred during sign-in. Please try again later.'),
+      //     backgroundColor: Colors.red,
+      //   ),
+      // );
     }
   }
 

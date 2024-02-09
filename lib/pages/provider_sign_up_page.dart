@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/objects/provider_user.dart';
+import 'package:help_app/objects/user.dart';
 //import 'package:help_app/pages/home_page.dart';
 import 'package:help_app/pages/home_page_provider.dart';
 import 'package:help_app/pages/sign_in_page.dart';
@@ -41,23 +43,28 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
   // send user email and password to Firebase Auth
   Future<void> _signUpFunc(BuildContext context) async {
     String errorMessage = '';
+
     try {
-      // sign up the user
-      await _auth.createUserWithEmailAndPassword(
+      // Sign up the user
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // store user data in 'users' firestore
-      addUserDataToFirestore(_nameController.text, _emailController.text);
+      // Store user data in Firestore
+      if (userCredential.user != null) {
+        String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-      // Redirect to home page after successful sign-up
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePageProvider()),
-      );
+        ProviderUser.addUserDataToFirestore(
+            _nameController.text, _emailController.text, userId!, 1, 0);
+        // Redirect to customer home page after successful sign-up
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageProvider()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
-      // invalid email address
       if (e.code == 'email-already-in-use') {
         // Set border color of email field to red
         setState(() {
@@ -65,19 +72,18 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
           errorMessage =
               'Email is already in use. Please enter a different email.';
         });
-      }
-      if (e.code == 'invalid-email') {
-        setState(() {
-          _emailBorderColor = Colors.red;
-        });
       } else if (e.code == 'weak-password') {
+        // Set border color of password field to red
         setState(() {
           _passwordBorderColor = Colors.red;
+          errorMessage = 'Weak password. Please choose a stronger password.';
         });
       }
     } catch (e) {
       print("Error during sign up: $e");
     }
+
+    // Show error message if any
     if (errorMessage.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -86,22 +92,6 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
         ),
       );
     }
-  }
-
-  // send user's data to FireStore db
-  Future<void> addUserDataToFirestore(String name, String email) async {
-    // set connection to users collection
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    // get userID from firebaseAuth
-    String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-    // create new doc of user. set unique ID
-    await users.add({
-      'userId': userId,
-      'name': name,
-      'email': email,
-      //'category': category,
-    });
   }
 
   @override

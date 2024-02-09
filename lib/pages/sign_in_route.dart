@@ -36,9 +36,9 @@ class SignInAuth extends StatelessWidget {
                 }
                 if (userSnapshot.hasData) {
                   AppUser? curr_user = userSnapshot.data;
-                  if (curr_user != null && curr_user.type == 2) {
+                  if (curr_user != null && curr_user.type == 1) {
                     return const HomePageProvider();
-                  } else if (curr_user != null && curr_user.type == 1) {
+                  } else if (curr_user != null && curr_user.type == 2) {
                     return const HomePageCustomer();
                   } else {
                     return const SignInPage();

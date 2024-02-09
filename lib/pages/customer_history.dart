@@ -12,9 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:help_app/objects/service_call.dart';
 
 class HistoryPage extends StatefulWidget {
-  final String customerId;
-
-  const HistoryPage({Key? key, required this.customerId}) : super(key: key);
+  const HistoryPage({Key? key}) : super(key: key);
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -32,6 +30,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Future<void> fetchCalls() async {
     try {
+      String? userId = FirebaseAuth.instance.currentUser?.uid;
       List<ServiceCall?> calls = await ServiceCall.getAllCustomerPosts(userId!);
       calls = calls.where((call) => call?.isCompleted == true).toList();
       setState(() {
@@ -39,7 +38,6 @@ class _HistoryPageState extends State<HistoryPage> {
         _isLoading = false;
       });
       print("fetched all service calls data successfully");
-      print(allCalls[1]?.area);
     } catch (e) {
       print("error occurred while fetching all service calls $e");
     }
@@ -70,7 +68,10 @@ class _HistoryPageState extends State<HistoryPage> {
               : ListView.builder(
                   itemCount: allCalls.length,
                   itemBuilder: (context, index) {
-                    return CallCard(call: allCalls[index]);
+                    return CallCard(
+                      call: allCalls[index],
+                      role_type: 2,
+                    );
                   },
                 ),
       bottomNavigationBar: BottomNavigationBar(
@@ -113,8 +114,7 @@ class _HistoryPageState extends State<HistoryPage> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      HistoryPage(customerId: widget.customerId),
+                  builder: (context) => HistoryPage(),
                 ),
               );
               break;

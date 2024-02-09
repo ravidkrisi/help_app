@@ -30,6 +30,7 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
       description: formData['description'],
       cost: formData['cost'],
       isCompleted: false,
+      isReviewed: false,
     ));
   }
 

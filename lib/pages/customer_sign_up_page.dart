@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/pages/sign_in_page.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
@@ -51,10 +52,14 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
 
       // Store user data in Firestore
       if (userCredential.user != null) {
-        await addUserDataToFirestore(
-            _nameController.text, _emailController.text);
+        String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-        // Redirect to home page after successful sign-up
+        AppUser.addUserDataToFirestore(
+            _nameController.text, 
+            _emailController.text, 
+            userId!, 
+            2);
+        // Redirect to customer home page after successful sign-up
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePageCustomer()),
@@ -90,21 +95,6 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
     }
   }
 
-  // send user's data to Firestore db
-  Future<void> addUserDataToFirestore(String name, String email) async {
-    // set connection to users collection
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    // get userID from FirebaseAuth
-    String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-    // create new doc of user. set unique ID
-    await users.add({
-      'userId': userId,
-      'name': name,
-      'email': email,
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -133,6 +123,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      // header
                       Text(
                         'Join our help community!',
                         style: TextStyle(
@@ -141,7 +132,11 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           color: lightColorScheme.primary,
                         ),
                       ),
+
+                      // divider
                       const SizedBox(height: 40.0),
+
+                      // name field
                       TextFormField(
                         controller: _nameController,
                         validator: (value) {
@@ -170,7 +165,11 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           ),
                         ),
                       ),
+
+                      // divider
                       const SizedBox(height: 25.0),
+
+                      // email field
                       TextFormField(
                         controller: _emailController,
                         validator: (value) {
@@ -204,7 +203,11 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           ),
                         ),
                       ),
+
+                      // divider
                       const SizedBox(height: 25.0),
+
+                      // password field
                       TextFormField(
                         controller: _passwordController,
                         obscureText: true,
@@ -241,7 +244,11 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           ),
                         ),
                       ),
+
+                      // divider
                       const SizedBox(height: 25.0),
+
+                      // sign up button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -253,7 +260,11 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           child: const Text('Sign up'),
                         ),
                       ),
+
+                      // divider
                       const SizedBox(height: 30.0),
+
+                      // sign in page redirect
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -282,6 +293,8 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           ),
                         ],
                       ),
+
+                      // divider
                       const SizedBox(height: 20.0),
                     ],
                   ),

@@ -38,7 +38,6 @@ class HomePageProviderState extends State<HomePageProvider> {
         _isLoading = false;
       });
       print("fetched all service calls data successfully");
-      print(allCalls[1]?.area);
     } catch (e) {
       print("error occured while fetching all service calls $e");
     }
@@ -110,7 +109,10 @@ class HomePageProviderState extends State<HomePageProvider> {
                               allCalls[index]?.area == selectedLocation) &&
                           (selectedCategory == "All" ||
                               allCalls[index]?.category == selectedCategory)) {
-                        return CallCard(call: allCalls[index]);
+                        return CallCard(
+                          call: allCalls[index],
+                          role_type: 1,
+                        );
                       } else {
                         return Container();
                       }

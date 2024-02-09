@@ -168,6 +168,7 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
 
         // Call the method to add review data to Firestore
         await Review.addReviewDataToFirestore(review);
+        await call.setIsReviewed(true);
 
         // Navigate back to the HistoryPage
         Navigator.pop(context);
