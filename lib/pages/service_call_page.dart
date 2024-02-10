@@ -5,10 +5,11 @@ import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:help_app/pages/home_page_customer.dart'; // Import HomePageCustomer page
+import 'package:help_app/pages/home_page_customer.dart';
 
 class ServiceCallPage extends StatefulWidget {
-  const ServiceCallPage({super.key});
+  final VoidCallback? onServiceCallAdded; // Define a callback
+  const ServiceCallPage({Key? key, this.onServiceCallAdded}) : super(key: key);
 
   @override
   State<ServiceCallPage> createState() => _ServiceCallPageState();
@@ -122,13 +123,10 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                       onPressed: () {
                         if (_formKey.currentState!.saveAndValidate()) {
                           _submitForm(_formKey.currentState!.value);
+                          // Call the callback function after submitting the form
+                          widget.onServiceCallAdded?.call();
                           // Navigate back to HomePageCustomer after submitting the form
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomePageCustomer(),
-                            ),
-                          );
+                          Navigator.pop(context);
                         }
                       },
                       style: ButtonStyle(

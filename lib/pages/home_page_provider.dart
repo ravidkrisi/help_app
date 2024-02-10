@@ -58,69 +58,77 @@ class HomePageProviderState extends State<HomePageProvider> {
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Location: "),
-                      DropdownButton<String>(
-                        value: selectedLocation,
-                        items: getUniqueLocations().map((location) {
-                          return DropdownMenuItem<String>(
-                            value: location,
-                            child: Text(location),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedLocation = value!;
-                            visiblePostCount = originalVisiblePostCount;
-                          });
+          : allCalls.isEmpty
+              ? Center(
+                  child: Text(
+                    'No calls right now',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                )
+              : Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Location: "),
+                          DropdownButton<String>(
+                            value: selectedLocation,
+                            items: getUniqueLocations().map((location) {
+                              return DropdownMenuItem<String>(
+                                value: location,
+                                child: Text(location),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedLocation = value!;
+                                visiblePostCount = originalVisiblePostCount;
+                              });
+                            },
+                          ),
+                          SizedBox(width: 1),
+                          Text("Category: "),
+                          DropdownButton<String>(
+                            value: selectedCategory,
+                            items: getUniqueCategories().map((category) {
+                              return DropdownMenuItem<String>(
+                                value: category,
+                                child: Text(category),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCategory = value!;
+                                visiblePostCount = originalVisiblePostCount;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: allCalls.length,
+                        itemBuilder: (context, index) {
+                          if ((selectedLocation == "All" ||
+                                  allCalls[index]?.area == selectedLocation) &&
+                              (selectedCategory == "All" ||
+                                  allCalls[index]?.category ==
+                                      selectedCategory)) {
+                            return CallCard(
+                              call: allCalls[index],
+                              role_type: 1,
+                            );
+                          } else {
+                            return Container();
+                          }
                         },
                       ),
-                      SizedBox(width: 1),
-                      Text("Category: "),
-                      DropdownButton<String>(
-                        value: selectedCategory,
-                        items: getUniqueCategories().map((category) {
-                          return DropdownMenuItem<String>(
-                            value: category,
-                            child: Text(category),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCategory = value!;
-                            visiblePostCount = originalVisiblePostCount;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: allCalls.length,
-                    itemBuilder: (context, index) {
-                      if ((selectedLocation == "All" ||
-                              allCalls[index]?.area == selectedLocation) &&
-                          (selectedCategory == "All" ||
-                              allCalls[index]?.category == selectedCategory)) {
-                        return CallCard(
-                          call: allCalls[index],
-                          role_type: 1,
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(

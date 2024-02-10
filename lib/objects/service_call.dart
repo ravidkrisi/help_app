@@ -137,6 +137,28 @@ class ServiceCall {
     return calls;
   }
 
+  factory ServiceCall.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    Map<String, dynamic> data = snapshot.data()!;
+    return ServiceCall(
+        serviceCallId: snapshot.id,
+        area: data['area'] ?? '',
+        category: data['category'] ?? '',
+        isCompleted: data['isCompleted'] ?? false,
+        customer: data['customer'] ?? '',
+        provider: data['provider'] ?? '',
+        description: data['description'] ?? '',
+        cost: data['cost'] ?? '',
+        isReviewed: data['isReviewed'] ?? false);
+  }
+  // static Stream<List<ServiceCall?>> getAllPostsStream() {
+  //   return FirebaseFirestore.instance
+  //       .collection('service_calls')
+  //       .snapshots()
+  //       .map((snapshot) =>
+  //           snapshot.docs.map((doc) => ServiceCall.fromSnapshot(doc)).toList());
+  // }
+
   // Function to retrieve all posts and create a list of Post instances
   static Future<List<ServiceCall?>> getAllCustomerPosts(
       String customerID) async {
