@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:help_app/objects/review.dart';
 import 'package:help_app/objects/service_call.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +20,7 @@ class CallCard extends StatefulWidget {
 
 class _CallCardState extends State<CallCard> {
   late Stream<DocumentSnapshot> _callStream = Stream.empty();
+  Review? review;
 
   @override
   void initState() {
@@ -27,6 +29,20 @@ class _CallCardState extends State<CallCard> {
         .collection('service_calls')
         .doc(widget.call?.serviceCallId)
         .snapshots();
+
+    getReview(widget.call).then((reviewData) {
+      setState(() {
+        review = reviewData;
+      });
+    });
+
+    print("this ${review?.customerID}");
+  }
+
+  Future<Review?> getReview(ServiceCall? call) async {
+    if (call?.isReviewed == true) {
+      return await Review.getReviewCallById(call?.serviceCallId ?? '');
+    }
   }
 
   @override
@@ -73,7 +89,18 @@ class _CallCardState extends State<CallCard> {
                     Text("Price: \$${widget.call?.cost}"),
                     SizedBox(height: 25),
                     Text(widget.call?.description ?? ''),
-                    SizedBox(height: 16),
+
+                    // review field
+                    (isReviewed && widget.role_type == 1)
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("rating: ${review?.rating}"),
+                              SizedBox(height: 10),
+                              Text("review desc: ${review?.reviewDesc}"),
+                            ],
+                          )
+                        : Container(),
                     // Render buttons based on conditions
                     _buildButtons(isCompleted, isReviewed),
                   ],
@@ -117,13 +144,6 @@ class _CallCardState extends State<CallCard> {
           );
         },
         child: Text("Leave Review"),
-      );
-    } else if (isCompleted && isReviewed && widget.role_type == 1) {
-      return ElevatedButton(
-        onPressed: () {
-          // handle see review button
-        },
-        child: Text("See Review"),
       );
     }
     return SizedBox.shrink();

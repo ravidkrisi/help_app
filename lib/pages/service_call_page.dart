@@ -18,7 +18,7 @@ class ServiceCallPage extends StatefulWidget {
 class _ServiceCallPageState extends State<ServiceCallPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
-  static void _submitForm(Map<String, dynamic> formData) async {
+  static Future<void> _submitForm(Map<String, dynamic> formData) async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
     AppUser? customer = await AppUser.getUserById(userId!);
 
@@ -120,13 +120,19 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                     ),
                     const SizedBox(height: 40.0),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.saveAndValidate()) {
-                          _submitForm(_formKey.currentState!.value);
+                          await _submitForm(_formKey.currentState!.value);
                           // Call the callback function after submitting the form
                           widget.onServiceCallAdded?.call();
                           // Navigate back to HomePageCustomer after submitting the form
-                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  HomePageCustomer(), // Replace with the actual ProfileProvider widget
+                            ),
+                          );
                         }
                       },
                       style: ButtonStyle(

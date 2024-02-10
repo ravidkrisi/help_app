@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/pages/customer_profile.dart';
 import 'package:help_app/pages/provider_profile.dart';
 import 'package:help_app/objects/provider_user.dart';
 import 'package:help_app/objects/user.dart';
@@ -105,7 +106,7 @@ class _HistoryPageState extends State<HistoryPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProviderProfile(),
+                  builder: (context) => CustomerProfile(),
                 ),
               );
               break;
