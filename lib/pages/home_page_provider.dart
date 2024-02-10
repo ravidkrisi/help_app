@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:help_app/objects/service_call.dart';
 import 'package:help_app/pages/provider_profile.dart';
+import 'package:help_app/pages/provider_history.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/widgets/call_card.dart';
+
+String? userId = FirebaseAuth.instance.currentUser?.uid;
 
 class HomePageProvider extends StatefulWidget {
   const HomePageProvider({Key? key}) : super(key: key);
@@ -28,12 +32,12 @@ class HomePageProviderState extends State<HomePageProvider> {
   Future<void> fetchCalls() async {
     try {
       List<ServiceCall?> calls = await ServiceCall.getAllPosts();
+      calls = calls.where((call) => call?.isCompleted == false).toList();
       setState(() {
         allCalls = calls;
         _isLoading = false;
       });
       print("fetched all service calls data successfully");
-      print(allCalls[1]?.area);
     } catch (e) {
       print("error occured while fetching all service calls $e");
     }
@@ -44,6 +48,13 @@ class HomePageProviderState extends State<HomePageProvider> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Posts"),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: fetchCalls,
+            icon: Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -98,7 +109,10 @@ class HomePageProviderState extends State<HomePageProvider> {
                               allCalls[index]?.area == selectedLocation) &&
                           (selectedCategory == "All" ||
                               allCalls[index]?.category == selectedCategory)) {
-                        return CallCard(call: allCalls[index]);
+                        return CallCard(
+                          call: allCalls[index],
+                          role_type: 1,
+                        );
                       } else {
                         return Container();
                       }
@@ -125,6 +139,12 @@ class HomePageProviderState extends State<HomePageProvider> {
         onTap: (index) {
           switch (index) {
             case 0:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomePageProvider(),
+                ),
+              );
               break;
             case 1:
               Navigator.push(
@@ -135,6 +155,13 @@ class HomePageProviderState extends State<HomePageProvider> {
               );
               break;
             case 2:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ProviderHistoryPage(customerId: userId.toString()),
+                ),
+              );
               break;
           }
         },

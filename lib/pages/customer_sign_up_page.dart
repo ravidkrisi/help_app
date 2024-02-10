@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/pages/sign_in_page.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
@@ -25,7 +26,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
 
-  // create instance of firenase authenticator
+  // create instance of firebase authenticator
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // controllers for user input
@@ -37,7 +38,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
   Color _emailBorderColor = Colors.black26;
   Color _passwordBorderColor = Colors.black26;
 
-  // send user email and password to FireBase Auth
+  // send user email and password to Firebase Auth
   Future<void> _signUpFunc(BuildContext context) async {
     String errorMessage = '';
 
@@ -51,11 +52,14 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
 
       // Store user data in Firestore
       if (userCredential.user != null) {
-        await addUserDataToFirestore(_nameController.text, _emailController.text
-            //_SelctedArea!,
-            );
+        String? userId = FirebaseAuth.instance.currentUser?.uid;
 
-        // Redirect to home page after successful sign-up
+        AppUser.addUserDataToFirestore(
+            _nameController.text, 
+            _emailController.text, 
+            userId!, 
+            2);
+        // Redirect to customer home page after successful sign-up
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePageCustomer()),
@@ -91,21 +95,6 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
     }
   }
 
-  // send user's data to FireStore db
-  Future<void> addUserDataToFirestore(String name, String email) async {
-    // set connection to users collection
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    // get userID from firebaseAuth
-    String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-    // create new doc of user. set unique ID
-    await users.add({
-      'userId': userId,
-      'name': name,
-      'email': email,
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -129,13 +118,12 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                 ),
               ),
               child: SingleChildScrollView(
-                // get started form
                 child: Form(
                   key: _formSignupKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // get started text
+                      // header
                       Text(
                         'Join our help community!',
                         style: TextStyle(
@@ -146,11 +134,9 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                       ),
 
                       // divider
-                      const SizedBox(
-                        height: 40.0,
-                      ),
+                      const SizedBox(height: 40.0),
 
-                      // full name
+                      // name field
                       TextFormField(
                         controller: _nameController,
                         validator: (value) {
@@ -181,24 +167,27 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                       ),
 
                       // divider
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
 
-                      // email
+                      // email field
                       TextFormField(
-                        // set pwd text field border to black after input submited
-                        onFieldSubmitted: (value) {
-                          setState(() {
-                            _emailBorderColor = Colors.black26;
-                          });
-                        },
                         controller: _emailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter an email address';
+                          }
+                          // Email format validation
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email address';
+                          }
+                          return null;
+                        },
                         decoration: InputDecoration(
                           label: const Text('Email*'),
                           hintText: 'Enter Email',
-                          hintStyle: TextStyle(
-                            color: Colors.black12,
+                          hintStyle: const TextStyle(
+                            color: Colors.black26,
                           ),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -216,24 +205,20 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                       ),
 
                       // divider
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
 
-                      // password
+                      // password field
                       TextFormField(
-                        // set pwd text field border to black after input submited
-                        onFieldSubmitted: (value) {
-                          setState(() {
-                            _passwordBorderColor = Colors.black26;
-                          });
-                        },
                         controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Password';
+                            return 'Please enter a password';
+                          }
+                          // Password strength validation
+                          if (value.length < 6) {
+                            return 'Password should be at least 6 characters';
                           }
                           return null;
                         },
@@ -261,73 +246,25 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                       ),
 
                       // divider
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
 
-                      // //Category
-                      // DropdownButtonFormField<String>(
-                      //   value: _SelctedArea,
-                      //   items: categories.map((category) {
-                      //     return DropdownMenuItem<String>(
-                      //       value: category,
-                      //       child: Text(category),
-                      //     );
-                      //   }).toList(),
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       _SelctedArea = value;
-                      //     });
-                      //   },
-                      //   decoration: InputDecoration(
-                      //     label: Text('Category*'),
-                      //     hintText: 'Select an area',
-                      //     hintStyle: TextStyle(
-                      //       color: Colors.black26,
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Colors.black12,
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Colors.black12,
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //   ),
-                      //   validator: (value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please select an area';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
-
-                      // divider
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-
-                      // signup button
+                      // sign up button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await _signUpFunc(context);
+                            if (_formSignupKey.currentState!.validate()) {
+                              await _signUpFunc(context);
+                            }
                           },
                           child: const Text('Sign up'),
                         ),
                       ),
 
                       // divider
-                      const SizedBox(
-                        height: 30.0,
-                      ),
+                      const SizedBox(height: 30.0),
 
-                      // already have an account
+                      // sign in page redirect
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -340,7 +277,6 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                           GestureDetector(
                             onTap: () {
                               Navigator.push(
-                                // Call the asynchronous function and wait for it to complete
                                 context,
                                 MaterialPageRoute(
                                   builder: (e) => const SignInPage(),
@@ -359,9 +295,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                       ),
 
                       // divider
-                      const SizedBox(
-                        height: 20.0,
-                      ),
+                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),

@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/customer_welcome_page.dart';
-//import 'package:help_app/pages/home_page.dart';
 import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/pages/home_page_provider.dart';
 import 'package:help_app/pages/provider_profile.dart';
@@ -37,12 +36,12 @@ class SignInAuth extends StatelessWidget {
                 }
                 if (userSnapshot.hasData) {
                   AppUser? curr_user = userSnapshot.data;
-                  if (curr_user != null && curr_user.type == 2) {
+                  if (curr_user != null && curr_user.type == 1) {
                     return const HomePageProvider();
-                  } else if (curr_user != null && curr_user.type == 1) {
+                  } else if (curr_user != null && curr_user.type == 2) {
                     return const HomePageCustomer();
                   } else {
-                    return const CustomerWelcomePage();
+                    return const SignInPage();
                   }
                 } else {
                   return const SignInPage();

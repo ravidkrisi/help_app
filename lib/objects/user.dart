@@ -40,8 +40,8 @@ class AppUser {
     );
   }
 
-  // Function to add user data to Firestore
-  static Future<void> addUserDataToFirestore(AppUser user) async {
+  // add user data to Firestore using AppUser instance
+  static Future<void> addUserToFirestore(AppUser user) async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     await users.add({
@@ -50,6 +50,19 @@ class AppUser {
       'email': user.email,
       //'area': user.area,
       'type': user.type,
+    });
+  }
+
+  // send user data to firestore 
+  static Future<void> addUserDataToFirestore(String name, String email, String userId, int type) async {
+    // set connection to users collection
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    await users.add({
+      'userId': userId,
+      'name': name,
+      'email': email,
+      'type': type,
     });
   }
 

@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/customer_sign_up_page.dart';
 import 'package:help_app/pages/home_page_customer.dart';
+import 'package:help_app/pages/home_page_provider.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -34,9 +36,21 @@ class _SignInPageState extends State<SignInPage> {
 
       // If sign-in is successful, navigate to home page
       if (userCredential.user != null) {
+        // check the role of the user
+        String? userId = FirebaseAuth.instance.currentUser?.uid;
+        AppUser? curr_user = await AppUser.getUserById(userId);
+        int type = 0;
+
+        if (curr_user != null) {
+          type = curr_user.type;
+          print(type);
+        }
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePageCustomer()),
+          MaterialPageRoute(
+              builder: (context) =>
+                  (type == 2) ? HomePageCustomer() : HomePageProvider()),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -56,13 +70,13 @@ class _SignInPageState extends State<SignInPage> {
       print("Error during sign in: $e");
 
       // Show a generic error message in a snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content:
-              Text('An error occurred during sign-in. Please try again later.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content:
+      //         Text('An error occurred during sign-in. Please try again later.'),
+      //     backgroundColor: Colors.red,
+      //   ),
+      // );
     }
   }
 
@@ -83,7 +97,7 @@ class _SignInPageState extends State<SignInPage> {
         Expanded(
             flex: 7,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 50, 25, 20),
+              padding: const EdgeInsets.fromLTRB(25, 80, 25, 20),
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -95,6 +109,7 @@ class _SignInPageState extends State<SignInPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // header
                         Text(
                           'Welcome back to HELPAPP',
                           style: TextStyle(
@@ -133,9 +148,12 @@ class _SignInPageState extends State<SignInPage> {
                                 borderRadius: BorderRadius.circular(10),
                               )),
                         ),
+
+                        // divider
                         const SizedBox(
                           height: 25.0,
                         ),
+
                         // password textfield
                         TextFormField(
                           controller: _passwordController,
@@ -167,45 +185,52 @@ class _SignInPageState extends State<SignInPage> {
                             ),
                           ),
                         ),
+
+                        // *** handle later
+                        // // divider
+                        // const SizedBox(
+                        //   height: 25.0,
+                        // ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Row(
+                        //       children: [
+                        //         Checkbox(
+                        //           value: rememberPassword,
+                        //           onChanged: (bool? value) {
+                        //             setState(() {
+                        //               rememberPassword = value!;
+                        //             });
+                        //           },
+                        //           activeColor: lightColorScheme.primary,
+                        //         ),
+                        //         const Text(
+                        //           'Remember me',
+                        //           style: TextStyle(
+                        //             color: Colors.black45,
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     GestureDetector(
+                        //       child: Text(
+                        //         'Forget password?',
+                        //         style: TextStyle(
+                        //           fontWeight: FontWeight.bold,
+                        //           color: lightColorScheme.primary,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+
+                        // divider
                         const SizedBox(
                           height: 25.0,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: rememberPassword,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      rememberPassword = value!;
-                                    });
-                                  },
-                                  activeColor: lightColorScheme.primary,
-                                ),
-                                const Text(
-                                  'Remember me',
-                                  style: TextStyle(
-                                    color: Colors.black45,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            GestureDetector(
-                              child: Text(
-                                'Forget password?',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: lightColorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
+
+                        // sign in button
                         GestureDetector(
                           onTap: signInFunc,
                           child: Container(
@@ -224,106 +249,8 @@ class _SignInPageState extends State<SignInPage> {
                             )),
                           ),
                         ),
-                        // GestureDetector(
-                        //   onTap: signInFunc,
-                        //   child: SizedBox(
-                        //     width: double.infinity,
-                        //     child: ElevatedButton(
-                        //       onPressed: () {
-                        //         if (_formSignInKey.currentState!.validate() &&
-                        //             rememberPassword) {
-                        //           ScaffoldMessenger.of(context).showSnackBar(
-                        //             const SnackBar(
-                        //               content: Text('Processing Data'),
-                        //             ),
-                        //           );
-                        //         } else if (!rememberPassword) {
-                        //           ScaffoldMessenger.of(context).showSnackBar(
-                        //             const SnackBar(
-                        //                 content: Text(
-                        //                     'Please agree to the processing of personal data')),
-                        //           );
-                        //         }
-                        //       },
-                        //       child: const Text('Sign in'),
-                        //     ),
-                        //   ),
-                        // ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Divider(
-                                thickness: 0.7,
-                                color: Colors.grey.withOpacity(0.5),
-                              ),
-                            ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 0,
-                                horizontal: 10,
-                              ),
-                              child: Text(
-                                'Sign up with',
-                                style: TextStyle(
-                                  color: Colors.black45,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Divider(
-                                thickness: 0.7,
-                                color: Colors.grey.withOpacity(0.5),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Logo(Logos.facebook_f),
-                            Logo(Logos.twitter),
-                            Logo(Logos.google),
-                            Logo(Logos.apple),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 25.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Don\'t have an account? ',
-                              style: TextStyle(
-                                color: Colors.black45,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (e) => const CustomerSignUpPage(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Sign up',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: lightColorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+
+                        // divider
                         const SizedBox(
                           height: 25.0,
                         ),

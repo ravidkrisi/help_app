@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/objects/provider_user.dart';
+import 'package:help_app/objects/user.dart';
 //import 'package:help_app/pages/home_page.dart';
 import 'package:help_app/pages/home_page_provider.dart';
 import 'package:help_app/pages/sign_in_page.dart';
@@ -20,13 +22,13 @@ List<String> categories = [
   "Dog-Sitting",
   "Plumbering"
 ];
-//String? _selectedCategory; // variable to hold the selected category
+String? _selectedCategory; // variable to hold the selected category
 
 class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
 
-  // create instance of firenase authenticator
+  // create instance of firebase authenticator
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // controllers for user input
@@ -38,58 +40,58 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
   Color _emailBorderColor = Colors.black26;
   Color _passwordBorderColor = Colors.black26;
 
-  // send user email and password to FireBase Auth
+  // send user email and password to Firebase Auth
   Future<void> _signUpFunc(BuildContext context) async {
+    String errorMessage = '';
+
     try {
-      // sign up the user
-      await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim());
-
-      // store user data in 'users' firestore
-      addUserDataToFirestore(_nameController.text, _emailController.text);
-
-      // Redirect to home page after successful sign-up
-      Navigator.pushReplacement(
-        context,
-        // ignore: prefer_const_constructors
-        MaterialPageRoute(builder: (context) => HomePageProvider()),
+      // Sign up the user
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-    }
-    // catch invalid sign up arguments
-    on FirebaseAuthException catch (e) {
-      // invalid email address
-      if (e.code == 'invalid-email') {
+
+      // Store user data in Firestore
+      if (userCredential.user != null) {
+        String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+        ProviderUser.addUserDataToFirestore(
+            _nameController.text, _emailController.text, userId!, 1, 0);
+        // Redirect to customer home page after successful sign-up
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePageProvider()),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        // Set border color of email field to red
         setState(() {
           _emailBorderColor = Colors.red;
+          errorMessage =
+              'Email is already in use. Please enter a different email.';
         });
       } else if (e.code == 'weak-password') {
+        // Set border color of password field to red
         setState(() {
           _passwordBorderColor = Colors.red;
+          errorMessage = 'Weak password. Please choose a stronger password.';
         });
       }
+    } catch (e) {
+      print("Error during sign up: $e");
     }
-    // handle errors
-    catch (e) {
-      // ignore: avoid_print
-      print("error during sign up $e");
+
+    // Show error message if any
+    if (errorMessage.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
-  }
-
-  // send user's data to FireStore db
-  Future<void> addUserDataToFirestore(String name, String email) async {
-    // set connection to users collection
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    // get userID from firebaseAuth
-    String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-    // create new doc of user. set unique ID
-    await users.add({
-      'userId': userId,
-      'name': name,
-      'email': email,
-      //'category': category,
-    });
   }
 
   @override
@@ -199,6 +201,17 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter an email address';
+                          }
+                          // Email format validation
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid email address';
+                          }
+                          return null;
+                        },
                       ),
 
                       // divider
@@ -219,7 +232,11 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                         obscuringCharacter: '*',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Password';
+                            return 'Please enter a password';
+                          }
+                          // Password strength validation
+                          if (value.length < 6) {
+                            return 'Password should be at least 6 characters';
                           }
                           return null;
                         },
@@ -251,58 +268,14 @@ class _ProviderSignUpPageState extends State<ProviderSignUpPage> {
                         height: 25.0,
                       ),
 
-                      // // category
-                      // DropdownButtonFormField<String>(
-                      //   value: _selectedCategory,
-                      //   items: categories.map((category) {
-                      //     return DropdownMenuItem<String>(
-                      //       value: category,
-                      //       child: Text(category),
-                      //     );
-                      //   }).toList(),
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       _selectedCategory = value;
-                      //     });
-                      //   },
-                      //   decoration: InputDecoration(
-                      //     label: Text('I'm good at:*'),
-                      //     hintText: 'Select a category',
-                      //     hintStyle: TextStyle(
-                      //       color: Colors.black26,
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Colors.black12,
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: BorderSide(
-                      //         color: Colors.black12,
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //   ),
-                      //   validator: (value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please select a category';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
-
-                      // divider
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-
                       // signup button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            await _signUpFunc(context);
+                            if (_formSignupKey.currentState!.validate()) {
+                              await _signUpFunc(context);
+                            }
                           },
                           child: const Text('Sign up'),
                         ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:help_app/objects/service_call.dart';
+import 'package:help_app/pages/customer_profile.dart';
 import 'package:help_app/pages/provider_profile.dart';
+import 'package:help_app/pages/customer_history.dart';
 import 'package:help_app/pages/service_call_page.dart';
 import 'package:help_app/widgets/call_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,158 +15,154 @@ class HomePageCustomer extends StatefulWidget {
 }
 
 class HomePageCustomerState extends State<HomePageCustomer> {
-  String selectedLocation = "All";
-  int originalVisiblePostCount = 10;
-  int visiblePostCount = 10;
   bool _isLoading = true;
+  int _selectedIndex = 0; // Add this variable to track the selected item index
 
   List<ServiceCall?> allCalls = [];
+  List<ServiceCall?> filteredCalls = [];
 
-  // set state when build the page
   @override
   void initState() {
     super.initState();
     fetchCalls();
   }
 
-  // async function to fetch all service calls
   Future<void> fetchCalls() async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
     try {
       List<ServiceCall?> calls = await ServiceCall.getAllCustomerPosts(userId!);
       setState(() {
         allCalls = calls;
+        filteredCalls =
+            allCalls.where((call) => call?.isCompleted == false).toList();
         _isLoading = false;
       });
-      print("fetched all service calls data successfully");
-      print(allCalls[1]?.area);
+      print("fetched all service calls data successfully ${userId!}");
     } catch (e) {
-      print("error occured while fetching all service calls $e");
+      print("error occurred while fetching all service calls $e");
     }
+  }
+
+  Future<void> _refreshHomePage() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await fetchCalls();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigate to your another screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  ServiceCallPage(), // Replace with your actual screen
-            ),
-          );
-        },
-        child: Icon(Icons.add),
-      ),
-      // top bar
       appBar: AppBar(
         title: Text("Posts"),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: _refreshHomePage,
+            icon: Icon(Icons.refresh),
+            tooltip: 'Refresh',
+          ),
+        ],
       ),
-
-      // body
       body:
-          // check if all data have fetched, else show progress bar
+          // fetch customer open calls
           _isLoading
               ? Center(child: CircularProgressIndicator())
-              : Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // location filter
-                          Text("Location: "),
-                          DropdownButton<String>(
-                            value: selectedLocation,
-                            items: getUniqueLocations().map((location) {
-                              return DropdownMenuItem<String>(
-                                value: location,
-                                child: Text(location),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedLocation = value!;
-                                visiblePostCount = originalVisiblePostCount;
-                              });
-                            },
-                          ),
-                        ],
+
+              // case 1: no open calls
+              : allCalls.isEmpty
+                  ? Center(
+                      child: Text(
+                        'create new call',
+                        style: TextStyle(fontSize: 24),
                       ),
-                    ),
-                    // create calls feed
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: allCalls.length,
-                        itemBuilder: (context, index) {
+                    )
+
+                  // case 2: create open calls queue
+                  : ListView.builder(
+                      itemCount: filteredCalls.length,
+                      itemBuilder: (context, index) {
+                        if (filteredCalls.isNotEmpty) {
                           // Check if the call's location matches the selected location
-                          if (selectedLocation == "All" ||
-                              allCalls[index]?.area == selectedLocation) {
-                            return CallCard(call: allCalls[index]);
-                          } else {
-                            // Return an empty container if the location doesn't match
-                            return Container();
-                          }
-                        },
-                      ),
+                          return CallCard(
+                              call: filteredCalls[index], role_type: 2);
+                        } else
+                          return Container();
+                      },
                     ),
-                  ],
-                ),
-      // bottom bar
+
+      // bottom buttons bar
       bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.purple,
+        currentIndex: _selectedIndex,
         items: [
           // home button
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
+
           // profile button
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
+
           // history button
           BottomNavigationBarItem(
             icon: Icon(Icons.history),
             label: 'History',
           ),
         ],
+
+        // bottom bar tap actions
         onTap: (index) {
+          setState(() {
+            _selectedIndex = index; // Update the selected index
+          });
           switch (index) {
             case 0:
-              // Handle tapping on the Home button if needed
-              break;
-            case 1:
-              // Handle tapping on the Profile button
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      ProviderProfile(), // Replace with the actual ProfileProvider widget
+                  builder: (context) => HomePageCustomer(),
+                ),
+              );
+              break;
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CustomerProfile(),
                 ),
               );
               break;
             case 2:
-              // Handle tapping on the History button if needed
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HistoryPage(),
+                ),
+              );
               break;
           }
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ServiceCallPage(),
+            ),
+          );
+        },
+        tooltip: 'Add Post',
+        child: Icon(Icons.add),
+      ),
     );
-  }
-
-  // generate locations list from the allcalls
-  List<String> getUniqueLocations() {
-    Set<String> uniqueLocations = Set<String>();
-    uniqueLocations.add("All");
-    for (var call in allCalls) {
-      uniqueLocations.add(call?.area ?? '');
-    }
-
-    return uniqueLocations.toList();
   }
 }

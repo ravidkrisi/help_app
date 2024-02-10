@@ -12,6 +12,7 @@ class ServiceCall {
   bool? isCompleted;
   int? rating;
   String? reviewDesc;
+  bool? isReviewed;
 
   ServiceCall({
     required this.serviceCallId,
@@ -22,8 +23,7 @@ class ServiceCall {
     required this.description,
     required this.cost,
     required this.isCompleted,
-    required this.rating,
-    required this.reviewDesc,
+    required this.isReviewed,
   });
 
   // Function to add user data to Firestore
@@ -38,9 +38,8 @@ class ServiceCall {
       'area': call.area,
       'description': call.description,
       'cost': call.cost,
-      'isCompleted': false,
-      'rating': null,
-      'reviewDesc': null,
+      'isCompleted': call.isCompleted,
+      'isReviewed': call.isReviewed,
     }).then((value) {
       // Document added successfully
       print('Data stored in Firestore!');
@@ -77,8 +76,7 @@ class ServiceCall {
           description: data['description'] ?? '',
           cost: data['cost'] ?? '',
           isCompleted: data['isCompleted'] ?? false,
-          rating: data['rating'] ?? 0,
-          reviewDesc: data['reviewDesc'] ?? '',
+          isReviewed: data['isReviewed'] ?? false,
         );
 
         return serviceCall;
@@ -95,7 +93,7 @@ class ServiceCall {
   }
 
   // update the review info of service call
-  void updateReview(int? rating, String? reviewDesc) async {
+  Future<void> setIsReviewed(bool isReviewed) async {
     try {
       // create reference to service_calls collection
       CollectionReference service_calls =
@@ -103,15 +101,13 @@ class ServiceCall {
 
       // data to be updated
       Map<String, dynamic> updatedData = {
-        'rating': rating,
-        'reviewDesc': reviewDesc,
+        'isReviewed': isReviewed,
       };
       print(serviceCallId);
       // Update the document with the specified userId
       await service_calls.doc(serviceCallId).update(updatedData);
-      print("im here");
 
-      print('User data updated successfully!');
+      print('call is reviewd updated successfully!');
     } catch (error) {
       print('Error updating user data: $error');
     }
@@ -142,7 +138,8 @@ class ServiceCall {
   }
 
   // Function to retrieve all posts and create a list of Post instances
-  static Future<List<ServiceCall?>> getAllCustomerPosts(String customerID) async {
+  static Future<List<ServiceCall?>> getAllCustomerPosts(
+      String customerID) async {
     QuerySnapshot callsSnapshot = await FirebaseFirestore.instance
         .collection('service_calls')
         .where('customerID', isEqualTo: customerID)
