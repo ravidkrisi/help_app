@@ -69,8 +69,15 @@ class _ProviderProfileState extends State<ProviderProfile> {
                   ),
                 ),
                 SizedBox(height: 10),
-                _buildBoldText('proffesion:', _user?.profession ?? 'NA'),
-                SizedBox(height: 10),
+
+                // email field
+                Text(
+                  "email: ${_user?.email ?? 'NA'}",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 // _buildBoldText('Area:', _user?.area ?? 'NA'),
                 SizedBox(height: 10),
                 _buildBoldTextWithStars(

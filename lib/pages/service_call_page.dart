@@ -5,10 +5,11 @@ import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:help_app/pages/home_page_customer.dart'; // Import HomePageCustomer page
+import 'package:help_app/pages/home_page_customer.dart';
 
 class ServiceCallPage extends StatefulWidget {
-  const ServiceCallPage({super.key});
+  final VoidCallback? onServiceCallAdded; // Define a callback
+  const ServiceCallPage({Key? key, this.onServiceCallAdded}) : super(key: key);
 
   @override
   State<ServiceCallPage> createState() => _ServiceCallPageState();
@@ -17,7 +18,7 @@ class ServiceCallPage extends StatefulWidget {
 class _ServiceCallPageState extends State<ServiceCallPage> {
   final GlobalKey<FormBuilderState> _formKey = GlobalKey<FormBuilderState>();
 
-  static void _submitForm(Map<String, dynamic> formData) async {
+  static Future<void> _submitForm(Map<String, dynamic> formData) async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
     AppUser? customer = await AppUser.getUserById(userId!);
 
@@ -119,14 +120,17 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                     ),
                     const SizedBox(height: 40.0),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.saveAndValidate()) {
-                          _submitForm(_formKey.currentState!.value);
+                          await _submitForm(_formKey.currentState!.value);
+                          // Call the callback function after submitting the form
+                          widget.onServiceCallAdded?.call();
                           // Navigate back to HomePageCustomer after submitting the form
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => HomePageCustomer(),
+                              builder: (context) =>
+                                  HomePageCustomer(), // Replace with the actual ProfileProvider widget
                             ),
                           );
                         }

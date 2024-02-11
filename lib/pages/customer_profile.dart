@@ -81,6 +81,18 @@ class _CustomerProfileState extends State<CustomerProfile> {
                 ),
 
                 // divider
+                SizedBox(height: 20),
+
+                // email field
+                Text(
+                  "email: ${_user?.email ?? 'NA'}",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                // divider
                 SizedBox(height: 20), // Added space from top
               ],
             ),

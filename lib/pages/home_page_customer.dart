@@ -21,11 +21,18 @@ class HomePageCustomerState extends State<HomePageCustomer> {
   List<ServiceCall?> allCalls = [];
   List<ServiceCall?> filteredCalls = [];
 
+// set state when build the page
   @override
   void initState() {
     super.initState();
     fetchCalls();
   }
+
+  // @override
+  // void didUpdateWidget(covariant HomePageCustomer oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   fetchCalls(); // Fetch calls whenever the widget updates
+  // }
 
   Future<void> fetchCalls() async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
@@ -53,6 +60,25 @@ class HomePageCustomerState extends State<HomePageCustomer> {
     });
   }
 
+  // void _addServiceCall() {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => ServiceCallPage(),
+  //     ),
+  //   ).then((_) {
+  //     // Reload the calls after returning from the ServiceCallPage
+  //     fetchCalls();
+  //   });
+  // }
+
+  // void _navigateToServiceCallPage() async {
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => ServiceCallPage()),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +94,7 @@ class HomePageCustomerState extends State<HomePageCustomer> {
         ],
       ),
       body:
+
           // fetch customer open calls
           _isLoading
               ? Center(child: CircularProgressIndicator())
@@ -152,14 +179,10 @@ class HomePageCustomerState extends State<HomePageCustomer> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ServiceCallPage(),
-            ),
-          );
-        },
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ServiceCallPage()),
+        ), // Update onPressed handler
         tooltip: 'Add Post',
         child: Icon(Icons.add),
       ),
