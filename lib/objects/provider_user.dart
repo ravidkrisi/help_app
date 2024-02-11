@@ -3,22 +3,18 @@ import 'package:help_app/objects/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderUser extends AppUser {
-  late String profession;
   late num rating;
 
   ProviderUser({
     required String userId,
     required String name,
     required String email,
-    //required String area,
     required int type,
-    required this.profession,
     required this.rating,
   }) : super(
           userId: userId,
           name: name,
           email: email,
-          //area: area,
           type: type,
         );
 
@@ -38,14 +34,12 @@ class ProviderUser extends AppUser {
             documentSnapshot.data() as Map<String, dynamic>;
 
         // Create a ProviderUser instance
-        print(data['rating']);
+
         ProviderUser user = ProviderUser(
           userId: data['userId'] ?? '',
           name: data['name'] ?? '',
           email: data['email'] ?? '',
-          profession: data['proffesion'] ?? '',
           rating: data['rating'] ?? '0',
-          // area: data['area'] ?? '',
           type: data['type'] ?? 0,
         );
 

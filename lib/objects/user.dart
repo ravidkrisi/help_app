@@ -4,18 +4,13 @@ class AppUser {
   late String userId;
   late String name;
   late String email;
-  //late String area;
   late int type;
-
-  // // default constructor
-  // User() : userId = '', name = '', email = '', nickname = '', creditcard = '';
 
   // Constructor for creating a user instance with data
   AppUser({
     required this.userId,
     required this.name,
     required this.email,
-    //required this.area,
     required this.type,
   });
 
@@ -23,7 +18,6 @@ class AppUser {
   AppUser.defaultUser()
       : userId = '',
         name = '',
-        //area = '',
         email = '',
         type = 0;
 
@@ -35,7 +29,6 @@ class AppUser {
       userId: data['userId'] ?? '',
       name: data['name'] ?? '',
       email: data['email'] ?? '',
-      //area: data['area'] ?? '',
       type: data['type'] ?? 0,
     );
   }
@@ -48,13 +41,13 @@ class AppUser {
       'userId': user.userId,
       'name': user.name,
       'email': user.email,
-      //'area': user.area,
       'type': user.type,
     });
   }
 
-  // send user data to firestore 
-  static Future<void> addUserDataToFirestore(String name, String email, String userId, int type) async {
+  // send user data to firestore
+  static Future<void> addUserDataToFirestore(
+      String name, String email, String userId, int type) async {
     // set connection to users collection
     CollectionReference users = FirebaseFirestore.instance.collection('users');
 

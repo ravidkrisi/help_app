@@ -50,8 +50,9 @@ class ProviderWelcomePage extends StatelessWidget {
                         text: const TextSpan(
                           children: [
                             TextSpan(
-                                text: 'HELPAPP\n',
+                                text: 'HelpApp\n',
                                 style: TextStyle(
+                                  color: Colors.black,
                                   fontSize: 45.0,
                                   fontWeight: FontWeight.w600,
                                 )),

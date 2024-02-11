@@ -36,8 +36,9 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
   final TextEditingController _nameController = TextEditingController();
 
   // decoration variables
-  Color _emailBorderColor = Colors.black;
-  Color _passwordBorderColor = Colors.black;
+  Color _nameBorderColor = Colors.black26;
+  Color _emailBorderColor = Colors.black26;
+  Color _passwordBorderColor = Colors.black26;
 
   // send user email and password to Firebase Auth
   Future<void> _signUpFunc(BuildContext context) async {
@@ -153,17 +154,17 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                             label: const Text('Full Name*'),
                             hintText: 'Enter Full Name',
                             hintStyle: const TextStyle(
-                              color: Colors.black26,
+                              color: Colors.black12,
                             ),
                             border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.black12, // Default border color
+                              borderSide: BorderSide(
+                                color: _nameBorderColor, // Default border color
                               ),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.black12, // Default border color
+                              borderSide: BorderSide(
+                                color: _nameBorderColor, // Default border color
                               ),
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -191,7 +192,7 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
                             label: const Text('Email*'),
                             hintText: 'Enter Email',
                             hintStyle: const TextStyle(
-                              color: Colors.black26,
+                              color: Colors.black12,
                             ),
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
