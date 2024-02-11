@@ -15,6 +15,7 @@ class ProviderProfile extends StatefulWidget {
 class _ProviderProfileState extends State<ProviderProfile> {
   String? _uid;
   ProviderUser? _user;
+  num? rating;
 
   @override
   void initState() {
@@ -25,15 +26,20 @@ class _ProviderProfileState extends State<ProviderProfile> {
   Future<void> checkCurrentUser() async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
     ProviderUser? providerUser = await ProviderUser.getUserById(userId!);
+    num? currRating = 0;
 
-    if (userId.isNotEmpty) {
+    // get user rating
+    if (providerUser != null) {
+      currRating = await providerUser.getRating();
+    }
+
+    if (mounted) {
+      // Check if the widget is still mounted before calling setState
       setState(() {
         _uid = userId;
         _user = providerUser;
-        // print(_user?.rating);
+        rating = currRating;
       });
-    } else {
-      print("User not logged in");
     }
   }
 
@@ -80,8 +86,8 @@ class _ProviderProfileState extends State<ProviderProfile> {
                 ),
                 // _buildBoldText('Area:', _user?.area ?? 'NA'),
                 SizedBox(height: 10),
-                _buildBoldTextWithStars(
-                    'Rating:', _user?.rating ?? 1.1), // Changed here
+                _buildBoldTextWithStars('Rating:',
+                    rating: rating), // Changed here
                 SizedBox(height: 10),
                 // _buildBoldTextWithStars('Recommendations:', first.recommendations),
                 SizedBox(height: 20), // Added space from top
@@ -154,7 +160,26 @@ class _ProviderProfileState extends State<ProviderProfile> {
     );
   }
 
-  Widget _buildBoldTextWithStars(String label, num rating) {
+  // Widget _buildBoldTextWithStars(String label, num rating) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: [
+  //       Text(
+  //         label,
+  //         style: TextStyle(
+  //           fontSize: 16,
+  //           fontWeight: FontWeight.bold,
+  //         ),
+  //       ),
+
+  //       SizedBox(width: 5),
+  //       if (label == 'Rating:')
+  //         _buildStarRating(rating), // Display stars if label is 'Rating:'
+  //     ],
+  //   );
+  // }
+
+  Widget _buildBoldTextWithStars(String label, {num? rating}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -165,9 +190,8 @@ class _ProviderProfileState extends State<ProviderProfile> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         SizedBox(width: 5),
-        if (label == 'Rating:')
+        if (label == 'Rating:' && rating != null)
           _buildStarRating(rating), // Display stars if label is 'Rating:'
       ],
     );

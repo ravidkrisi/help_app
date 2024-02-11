@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:help_app/objects/review.dart';
 import 'package:help_app/objects/user.dart';
 
 class ServiceCall {
@@ -159,7 +160,7 @@ class ServiceCall {
   //           snapshot.docs.map((doc) => ServiceCall.fromSnapshot(doc)).toList());
   // }
 
-  // Function to retrieve all posts and create a list of Post instances
+  // Function to retrieve all customer posts and create a list of Post instances
   static Future<List<ServiceCall?>> getAllCustomerPosts(
       String customerID) async {
     QuerySnapshot callsSnapshot = await FirebaseFirestore.instance
@@ -184,5 +185,41 @@ class ServiceCall {
     }
 
     return calls;
+  }
+
+  // Function to retrieve all provider posts and create a list of Post instances
+  static Future<List<ServiceCall?>> getAllProviderPosts(
+      String providerID) async {
+    QuerySnapshot callsSnapshot = await FirebaseFirestore.instance
+        .collection('service_calls')
+        .where('providerID', isEqualTo: providerID)
+        .get();
+
+    List<Future<ServiceCall?>> callsFutures = [];
+
+    for (QueryDocumentSnapshot callDocument in callsSnapshot.docs) {
+      String callId = callDocument.id;
+      // You can add more properties as needed
+      Future<ServiceCall?> call = ServiceCall.getServiceCallById(callId);
+      callsFutures.add(call);
+    }
+
+    // wait for all the futures to complete and then filter out null values
+    List<ServiceCall?> calls = [];
+    for (var future in callsFutures) {
+      var call = await future;
+      calls.add(call);
+    }
+
+    return calls;
+  }
+
+  // get Review instance of the service call 
+  Future<Review?> getReview() {
+    if (this.isReviewed == true) {
+      return Review.getReviewCallById(serviceCallId!);
+    } else {
+      return Future.value(null);
+    }
   }
 }
