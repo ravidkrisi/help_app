@@ -101,7 +101,7 @@ class HomePageCustomerState extends State<HomePageCustomer> {
               ? Center(child: CircularProgressIndicator())
 
               // case 1: no open calls
-              : allCalls.isEmpty
+              : filteredCalls.isEmpty
                   ? Center(
                       child: Text(
                         'create new call',
