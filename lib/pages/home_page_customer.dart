@@ -6,6 +6,7 @@ import 'package:help_app/pages/customer_history.dart';
 import 'package:help_app/pages/service_call_page.dart';
 import 'package:help_app/widgets/call_card.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:help_app/pages/bottom_navigation_template.dart';
 
 class HomePageCustomer extends StatefulWidget {
   const HomePageCustomer({Key? key}) : super(key: key);
@@ -120,7 +121,9 @@ class HomePageCustomerState extends State<HomePageCustomer> {
                           return Container();
                       },
                     ),
-
+      // bottomNavigationBar: BottomNavigationTemplate(
+      //   userId: FirebaseAuth.instance.currentUser!.uid,
+      // ),
       // bottom buttons bar
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.purple,

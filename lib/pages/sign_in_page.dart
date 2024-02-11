@@ -9,7 +9,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:help_app/theme/theme.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+  const SignInPage({Key? key});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -90,21 +90,27 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+            color: Colors.black), // Set the back arrow color to black
+        // other app bar properties
+      ),
+      body: CustomScaffold(
         child: Column(
-      children: [
-        const Expanded(flex: 2, child: SizedBox(height: 10)),
-        Expanded(
-            flex: 7,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 80, 25, 20),
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40))),
-              child: SingleChildScrollView(
-                child: Form(
+          children: [
+            const Expanded(flex: 2, child: SizedBox(height: 10)),
+            Expanded(
+              flex: 7,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(25, 80, 25, 20),
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40))),
+                child: SingleChildScrollView(
+                  child: Form(
                     key: _formSignInKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -186,45 +192,6 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
 
-                        // *** handle later
-                        // // divider
-                        // const SizedBox(
-                        //   height: 25.0,
-                        // ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     Row(
-                        //       children: [
-                        //         Checkbox(
-                        //           value: rememberPassword,
-                        //           onChanged: (bool? value) {
-                        //             setState(() {
-                        //               rememberPassword = value!;
-                        //             });
-                        //           },
-                        //           activeColor: lightColorScheme.primary,
-                        //         ),
-                        //         const Text(
-                        //           'Remember me',
-                        //           style: TextStyle(
-                        //             color: Colors.black45,
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //     GestureDetector(
-                        //       child: Text(
-                        //         'Forget password?',
-                        //         style: TextStyle(
-                        //           fontWeight: FontWeight.bold,
-                        //           color: lightColorScheme.primary,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-
                         // divider
                         const SizedBox(
                           height: 25.0,
@@ -254,11 +221,43 @@ class _SignInPageState extends State<SignInPage> {
                         const SizedBox(
                           height: 25.0,
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Don\'t have an account? ',
+                              style: TextStyle(
+                                color: Colors.black45,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (e) => const CustomerSignUpPage(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Sign up',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: lightColorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
-                    )),
+                    ),
+                  ),
+                ),
               ),
-            )),
-      ],
-    ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
