@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:help_app/objects/service_call.dart';
-import 'package:help_app/pages/provider_profile.dart';
-import 'package:help_app/pages/provider_history.dart';
+import 'package:help_app/pages/profile_provider.dart';
+import 'package:help_app/pages/history_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/widgets/call_card.dart';
 import 'package:help_app/widgets/custom_bottom_bar.dart';

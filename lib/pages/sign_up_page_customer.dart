@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/objects/user.dart';
 import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/pages/sign_in_page.dart';
-import 'package:help_app/pages/provider_sign_up_page.dart';
+import 'package:help_app/pages/sign_up_page_provider.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:help_app/theme/theme.dart';
