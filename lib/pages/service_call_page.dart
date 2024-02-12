@@ -6,6 +6,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:help_app/pages/home_page_customer.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 class ServiceCallPage extends StatefulWidget {
   final VoidCallback? onServiceCallAdded; // Define a callback
@@ -117,6 +118,10 @@ class _ServiceCallPageState extends State<ServiceCallPage> {
                       name: 'cost',
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(labelText: 'Cost*'),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                        FormBuilderValidators.numeric(),
+                      ]),
                     ),
                     const SizedBox(height: 40.0),
                     ElevatedButton(
