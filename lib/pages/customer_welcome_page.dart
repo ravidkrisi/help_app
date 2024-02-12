@@ -49,16 +49,15 @@ class CustomerWelcomePage extends StatelessWidget {
                         text: const TextSpan(
                           children: [
                             TextSpan(
-                                text: 'HELPAPP\n',
+                                text: 'HelpApp\n',
                                 style: TextStyle(
+                                  color: Colors.black,
                                   fontSize: 45.0,
                                   fontWeight: FontWeight.w600,
                                 )),
                             TextSpan(
-                                //text: '\logo here? diff background?',
                                 style: TextStyle(
                               fontSize: 20,
-                              // height: 0,
                             ))
                           ],
                         ),

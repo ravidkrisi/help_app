@@ -11,6 +11,7 @@ import 'package:help_app/pages/home_page_customer.dart'; // Import HomePageProvi
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:help_app/objects/service_call.dart';
+import 'package:help_app/widgets/custom_bottom_bar.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({Key? key}) : super(key: key);
@@ -47,81 +48,37 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('History'),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: fetchCalls,
-            icon: Icon(Icons.refresh),
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : allCalls.isEmpty
-              ? Center(
-                  child: Text(
-                    'No completed service calls found.',
-                    style: TextStyle(fontSize: 24),
+        appBar: AppBar(
+          title: Text('History'),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              onPressed: fetchCalls,
+              icon: Icon(Icons.refresh),
+            ),
+          ],
+        ),
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : allCalls.isEmpty
+                ? Center(
+                    child: Text(
+                      'No completed service calls found.',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: allCalls.length,
+                    itemBuilder: (context, index) {
+                      return CallCard(
+                        call: allCalls[index],
+                        role_type: 2,
+                      );
+                    },
                   ),
-                )
-              : ListView.builder(
-                  itemCount: allCalls.length,
-                  itemBuilder: (context, index) {
-                    return CallCard(
-                      call: allCalls[index],
-                      role_type: 2,
-                    );
-                  },
-                ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-        ],
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              // Handle tapping on the Home button if needed
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePageCustomer(),
-                ),
-              );
-              break;
-            case 1:
-              // Handle tapping on the Profile button
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CustomerProfile(),
-                ),
-              );
-              break;
-            case 2:
-              // Handle tapping on the History button
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HistoryPage(),
-                ),
-              );
-              break;
-          }
-        },
-      ),
-    );
+        bottomNavigationBar: CustomBottomNavigationBar(
+          userType: 1,
+          currentIndex: 2,
+        ));
   }
 }

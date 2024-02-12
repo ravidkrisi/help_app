@@ -1,24 +1,22 @@
 // Extended class with additional property
+import 'package:help_app/objects/review.dart';
+import 'package:help_app/objects/service_call.dart';
 import 'package:help_app/objects/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderUser extends AppUser {
-  late String profession;
   late num rating;
 
   ProviderUser({
     required String userId,
     required String name,
     required String email,
-    //required String area,
     required int type,
-    required this.profession,
     required this.rating,
   }) : super(
           userId: userId,
           name: name,
           email: email,
-          //area: area,
           type: type,
         );
 
@@ -38,14 +36,12 @@ class ProviderUser extends AppUser {
             documentSnapshot.data() as Map<String, dynamic>;
 
         // Create a ProviderUser instance
-        print(data['rating']);
+
         ProviderUser user = ProviderUser(
           userId: data['userId'] ?? '',
           name: data['name'] ?? '',
           email: data['email'] ?? '',
-          profession: data['proffesion'] ?? '',
           rating: data['rating'] ?? '0',
-          // area: data['area'] ?? '',
           type: data['type'] ?? 0,
         );
 
@@ -72,5 +68,28 @@ class ProviderUser extends AppUser {
       'type': type,
       'rating': rating,
     });
+  }
+
+  // get provider rating based on all his reviews
+  Future<num> getRating() async {
+    // get all provider calls
+    List<ServiceCall?> calls = await ServiceCall.getAllProviderPosts(userId);
+
+    // filter only reviewed calls
+    List<ServiceCall?> reviewedCalls =
+        calls.where((call) => call?.isReviewed == true).toList();
+    Review? review;
+    num total_rating = 0;
+    num reviews_count = 0;
+    // Iterate over all reviewedCalls
+    for (var call in reviewedCalls) {
+      review = await call?.getReview();
+      if (review != null) {
+        total_rating += review.rating ?? 0;
+        reviews_count++;
+      }
+    }
+
+    return (reviews_count != 0) ? total_rating / reviews_count : 0;
   }
 }
