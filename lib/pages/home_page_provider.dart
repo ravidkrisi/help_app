@@ -4,6 +4,7 @@ import 'package:help_app/pages/provider_profile.dart';
 import 'package:help_app/pages/provider_history.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/widgets/call_card.dart';
+import 'package:help_app/widgets/custom_bottom_bar.dart';
 
 String? userId = FirebaseAuth.instance.currentUser?.uid;
 
@@ -46,135 +47,92 @@ class HomePageProviderState extends State<HomePageProvider> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Posts"),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: fetchCalls,
-            icon: Icon(Icons.refresh),
-          ),
-        ],
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : allCalls.isEmpty
-              ? Center(
-                  child: Text(
-                    'No calls right now',
-                    style: TextStyle(fontSize: 24),
+        appBar: AppBar(
+          title: Text("Posts"),
+          automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              onPressed: fetchCalls,
+              icon: Icon(Icons.refresh),
+            ),
+          ],
+        ),
+        body: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : allCalls.isEmpty
+                ? Center(
+                    child: Text(
+                      'No calls right now',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  )
+                : Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Location: "),
+                            DropdownButton<String>(
+                              value: selectedLocation,
+                              items: getUniqueLocations().map((location) {
+                                return DropdownMenuItem<String>(
+                                  value: location,
+                                  child: Text(location),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedLocation = value!;
+                                  visiblePostCount = originalVisiblePostCount;
+                                });
+                              },
+                            ),
+                            SizedBox(width: 1),
+                            Text("Category: "),
+                            DropdownButton<String>(
+                              value: selectedCategory,
+                              items: getUniqueCategories().map((category) {
+                                return DropdownMenuItem<String>(
+                                  value: category,
+                                  child: Text(category),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedCategory = value!;
+                                  visiblePostCount = originalVisiblePostCount;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: allCalls.length,
+                          itemBuilder: (context, index) {
+                            if ((selectedLocation == "All" ||
+                                    allCalls[index]?.area ==
+                                        selectedLocation) &&
+                                (selectedCategory == "All" ||
+                                    allCalls[index]?.category ==
+                                        selectedCategory)) {
+                              return CallCard(
+                                call: allCalls[index],
+                                role_type: 1,
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                )
-              : Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Location: "),
-                          DropdownButton<String>(
-                            value: selectedLocation,
-                            items: getUniqueLocations().map((location) {
-                              return DropdownMenuItem<String>(
-                                value: location,
-                                child: Text(location),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedLocation = value!;
-                                visiblePostCount = originalVisiblePostCount;
-                              });
-                            },
-                          ),
-                          SizedBox(width: 1),
-                          Text("Category: "),
-                          DropdownButton<String>(
-                            value: selectedCategory,
-                            items: getUniqueCategories().map((category) {
-                              return DropdownMenuItem<String>(
-                                value: category,
-                                child: Text(category),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCategory = value!;
-                                visiblePostCount = originalVisiblePostCount;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: allCalls.length,
-                        itemBuilder: (context, index) {
-                          if ((selectedLocation == "All" ||
-                                  allCalls[index]?.area == selectedLocation) &&
-                              (selectedCategory == "All" ||
-                                  allCalls[index]?.category ==
-                                      selectedCategory)) {
-                            return CallCard(
-                              call: allCalls[index],
-                              role_type: 1,
-                            );
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-        ],
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomePageProvider(),
-                ),
-              );
-              break;
-            case 1:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProviderProfile(),
-                ),
-              );
-              break;
-            case 2:
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ProviderHistoryPage(customerId: userId.toString()),
-                ),
-              );
-              break;
-          }
-        },
-      ),
-    );
+        bottomNavigationBar:
+            CustomBottomNavigationBar(userType: 1, currentIndex: 0));
   }
 
   List<String> getUniqueLocations() {
