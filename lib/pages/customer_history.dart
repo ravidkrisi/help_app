@@ -77,7 +77,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     },
                   ),
         bottomNavigationBar: CustomBottomNavigationBar(
-          userType: 1,
+          userType: 2,
           currentIndex: 2,
         ));
   }

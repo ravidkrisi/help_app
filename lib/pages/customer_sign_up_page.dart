@@ -97,7 +97,10 @@ class _CustomerSignUpPageState extends State<CustomerSignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // extendBodyBehindAppBar: true, // Extend body behind app bar
       appBar: AppBar(
+        // elevation: 0, // Disable elevation
+        // backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(
             color: Colors.black), // Set the back arrow color to black
         // other app bar properties
