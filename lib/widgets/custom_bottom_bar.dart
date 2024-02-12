@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:help_app/pages/customer_history.dart';
-import 'package:help_app/pages/customer_profile.dart';
+import 'package:help_app/pages/history_customer.dart';
+import 'package:help_app/pages/profile_customer.dart';
 import 'package:help_app/pages/home_page_customer.dart';
 import 'package:help_app/pages/home_page_provider.dart';
-import 'package:help_app/pages/provider_history.dart';
-import 'package:help_app/pages/provider_profile.dart';
+import 'package:help_app/pages/history_provider.dart';
+import 'package:help_app/pages/profile_provider.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int userType;
@@ -88,7 +88,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HistoryPage(),
+                  builder: (context) => CustomerHistoryPage(),
                 ),
               );
             }

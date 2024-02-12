@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:help_app/objects/provider_user.dart';
 import 'package:help_app/objects/user.dart';
-import 'package:help_app/pages/customer_welcome_page.dart';
-import 'package:help_app/pages/home_page_customer.dart';
-import 'package:help_app/pages/home_page_provider.dart'; // Import HomePageProvider page
+import 'package:help_app/pages/welcome_page_customer.dart';
+import 'package:help_app/pages/home_page_provider.dart';
+import 'package:help_app/widgets/custom_bottom_bar.dart'; // Import HomePageProvider page
 
-class CustomerProfile extends StatefulWidget {
-  const CustomerProfile({Key? key}) : super(key: key);
+class ProviderProfile extends StatefulWidget {
+  const ProviderProfile({Key? key}) : super(key: key);
 
   @override
-  State<CustomerProfile> createState() => _CustomerProfileState();
+  State<ProviderProfile> createState() => _ProviderProfileState();
 }
 
-class _CustomerProfileState extends State<CustomerProfile> {
+class _ProviderProfileState extends State<ProviderProfile> {
   String? _uid;
-  AppUser? _user;
+  ProviderUser? _user;
+  num? rating;
 
   @override
   void initState() {
@@ -25,28 +26,31 @@ class _CustomerProfileState extends State<CustomerProfile> {
 
   Future<void> checkCurrentUser() async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
-    print(userId);
-    AppUser? customerUser = await AppUser.getUserById(userId!);
+    ProviderUser? providerUser = await ProviderUser.getUserById(userId!);
+    num? currRating = 0;
 
-    if (userId.isNotEmpty) {
+    // get user rating
+    if (providerUser != null) {
+      currRating = await providerUser.getRating();
+    }
+
+    if (mounted) {
+      // Check if the widget is still mounted before calling setState
       setState(() {
         _uid = userId;
-        _user = customerUser;
+        _user = providerUser;
+        rating = currRating;
       });
-    } else {
-      print("User not logged in");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // top bar
       appBar: AppBar(
-        title: Text('Profile'),
+        title: Center(child: Text('Profile')),
+        automaticallyImplyLeading: false,
       ),
-
-      // main body
       body: Column(
         children: [
           Container(
@@ -54,10 +58,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // divider
-                SizedBox(height: 20),
-
-                // profile picture field
+                SizedBox(height: 20), // Added space from top
                 CircleAvatar(
                   radius: 60,
                   backgroundColor: Colors.blue, // Change to blue
@@ -67,11 +68,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
                     size: 80,
                   ),
                 ),
-
-                // divider
                 SizedBox(height: 20),
-
-                // name field
                 Text(
                   _user?.name ?? 'NA',
                   style: TextStyle(
@@ -79,9 +76,7 @@ class _CustomerProfileState extends State<CustomerProfile> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
-                // divider
-                SizedBox(height: 20),
+                SizedBox(height: 10),
 
                 // email field
                 Text(
@@ -91,8 +86,12 @@ class _CustomerProfileState extends State<CustomerProfile> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
-                // divider
+                // _buildBoldText('Area:', _user?.area ?? 'NA'),
+                SizedBox(height: 10),
+                _buildBoldTextWithStars('Rating:',
+                    rating: rating), // Changed here
+                SizedBox(height: 10),
+                // _buildBoldTextWithStars('Recommendations:', first.recommendations),
                 SizedBox(height: 20), // Added space from top
               ],
             ),
@@ -109,6 +108,37 @@ class _CustomerProfileState extends State<CustomerProfile> {
           )
         ],
       ),
+      bottomNavigationBar:
+          CustomBottomNavigationBar(userType: 1, currentIndex: 1),
+    );
+  }
+
+  Widget _buildStarRating(num rating) {
+    int fullStars = rating.floor();
+    num halfStar = rating - fullStars;
+
+    List<Widget> stars = [];
+
+    // Add full stars
+    for (int i = 0; i < fullStars; i++) {
+      stars.add(Icon(Icons.star, color: Colors.yellow));
+    }
+
+    // Add half star if necessary
+    if (halfStar > 0) {
+      stars.add(Icon(Icons.star_half, color: Colors.yellow));
+      fullStars++; // Increment fullStars to account for the half star
+    }
+
+    // Add empty stars to complete 5 stars
+    for (int i = fullStars; i < 5; i++) {
+      stars
+          .add(Icon(Icons.star_border, color: Colors.grey)); // Empty star color
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: stars,
     );
   }
 
@@ -134,25 +164,28 @@ class _CustomerProfileState extends State<CustomerProfile> {
     );
   }
 
+  Widget _buildBoldTextWithStars(String label, {num? rating}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(width: 5),
+        if (label == 'Rating:' && rating != null)
+          _buildStarRating(rating), // Display stars if label is 'Rating:'
+      ],
+    );
+  }
+
   Widget _buildBottomButtons(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        GestureDetector(
-          onTap: () {
-            // Navigate to HomePageProvider
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePageCustomer()),
-            );
-          },
-          child: Column(
-            children: [
-              Icon(Icons.home, size: 30),
-              Text('Home'),
-            ],
-          ),
-        ),
         GestureDetector(
           onTap: () {
             _signOut(context);

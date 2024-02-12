@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:help_app/pages/provider_profile.dart';
+import 'package:help_app/pages/profile_provider.dart';
 import 'package:help_app/objects/provider_user.dart';
 import 'package:help_app/objects/user.dart';
 import 'package:help_app/widgets/call_card.dart';
 import 'package:help_app/pages/service_call_page.dart';
-import 'package:help_app/pages/customer_welcome_page.dart';
+import 'package:help_app/pages/welcome_page_customer.dart';
 import 'package:help_app/pages/home_page_provider.dart'; // Import HomePageProvider page
 import 'package:cloud_firestore/cloud_firestore.dart';
 

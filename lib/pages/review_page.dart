@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:help_app/objects/service_call.dart';
-import 'package:help_app/pages/customer_history.dart';
+import 'package:help_app/pages/history_customer.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:help_app/objects/review.dart'; // Import the Review class
 
@@ -175,7 +175,7 @@ class _LeaveReviewPageState extends State<LeaveReviewPage> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                HistoryPage(), // Replace with the actual ProfileProvider widget
+                CustomerHistoryPage(), // Replace with the actual ProfileProvider widget
           ),
         );
       }

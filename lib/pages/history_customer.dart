@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:help_app/pages/customer_profile.dart';
-import 'package:help_app/pages/provider_profile.dart';
+import 'package:help_app/pages/profile_customer.dart';
+import 'package:help_app/pages/profile_provider.dart';
 import 'package:help_app/objects/provider_user.dart';
 import 'package:help_app/objects/user.dart';
 import 'package:help_app/widgets/call_card.dart';
 import 'package:help_app/pages/service_call_page.dart';
-import 'package:help_app/pages/customer_welcome_page.dart';
+import 'package:help_app/pages/welcome_page_customer.dart';
 import 'package:help_app/pages/home_page_customer.dart'; // Import HomePageProvider page
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:help_app/objects/service_call.dart';
 import 'package:help_app/widgets/custom_bottom_bar.dart';
 
-class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
+class CustomerHistoryPage extends StatefulWidget {
+  const CustomerHistoryPage({Key? key}) : super(key: key);
 
   @override
-  State<HistoryPage> createState() => _HistoryPageState();
+  State<CustomerHistoryPage> createState() => _CustomerHistoryPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
+class _CustomerHistoryPageState extends State<CustomerHistoryPage> {
   bool _isLoading = true;
   List<ServiceCall?> allCalls = [];
 

@@ -1,15 +1,14 @@
-import 'package:help_app/pages/customer_welcome_page.dart';
-import 'package:help_app/pages/provider_sign_up_page.dart';
+import 'package:help_app/pages/welcome_page_provider.dart';
 import 'package:help_app/pages/review_page.dart';
 import 'package:help_app/pages/service_call_page.dart';
 import 'package:help_app/pages/sign_in_route.dart';
 import 'package:help_app/widgets/custom_button.dart';
 import 'package:help_app/widgets/custom_scaffold.dart';
 import 'package:flutter/material.dart';
-import 'package:help_app/pages/customer_sign_up_page.dart';
+import 'package:help_app/pages/sign_up_page_customer.dart';
 
-class ProviderWelcomePage extends StatelessWidget {
-  const ProviderWelcomePage({super.key});
+class CustomerWelcomePage extends StatelessWidget {
+  const CustomerWelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +20,15 @@ class ProviderWelcomePage extends StatelessWidget {
               flex: 8,
               child: Column(
                 children: [
-                  // switch userRole button; redirect provider to customer welcome page
+                  // switch userRole button; redirect customer to provider welcome page
                   TextButton(
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => CustomerWelcomePage()),
+                          builder: (context) => ProviderWelcomePage()),
                     ),
                     child: Text(
-                      "Are you a customer?\n Click here",
+                      "Are you a provider?\n Click here",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black,
@@ -57,10 +56,8 @@ class ProviderWelcomePage extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                 )),
                             TextSpan(
-                                //text: '\logo here? diff background?',
                                 style: TextStyle(
                               fontSize: 20,
-                              // height: 0,
                             ))
                           ],
                         ),
@@ -84,7 +81,7 @@ class ProviderWelcomePage extends StatelessWidget {
                     ),
                     Expanded(
                       // sign up button
-                      child: WelcomButton("sign up", ProviderSignUpPage(),
+                      child: WelcomButton("sign up", CustomerSignUpPage(),
                           Color.fromARGB(255, 96, 52, 171), Colors.white),
                     ),
                   ],
