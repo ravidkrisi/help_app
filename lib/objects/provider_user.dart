@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProviderUser extends AppUser {
   late num rating;
+  List<ServiceCall?> serviceCalls;
+  num totalEarning;
 
   ProviderUser({
     required String userId,
@@ -13,12 +15,22 @@ class ProviderUser extends AppUser {
     required String email,
     required int type,
     required this.rating,
+    this.serviceCalls = const [],
+    this.totalEarning = 0,
   }) : super(
           userId: userId,
           name: name,
           email: email,
           type: type,
-        );
+        ) {
+    initialize();
+  }
+
+  // New method to initialize the user
+  Future<void> initialize() async {
+    await fetchServiceCalls();
+    updateTotalEarning();
+  }
 
   // Override the getUserById method to return additional information
   static Future<ProviderUser?> getUserById(String? userId) async {
@@ -91,5 +103,30 @@ class ProviderUser extends AppUser {
     }
 
     return (reviews_count != 0) ? total_rating / reviews_count : 0;
+  }
+
+  // Method to fetch service calls
+  Future<void> fetchServiceCalls() async {
+    // Call the appropriate method from ServiceCall class to get all service calls
+    serviceCalls = await ServiceCall.getAllProviderPosts(userId);
+  }
+
+  // Method to manually refresh service calls
+  Future<void> refreshServiceCalls() async {
+    serviceCalls = await ServiceCall.getAllProviderPosts(userId);
+  }
+
+  // update provider total earning
+  void updateTotalEarning() {
+    num temp = 0;
+    print("im here");
+    for (var call in serviceCalls) {
+      if (call != null) {
+        print("cost ${call.cost}");
+        temp += num.parse(call.cost!);
+      }
+    }
+
+    totalEarning = temp;
   }
 }
