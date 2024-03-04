@@ -58,17 +58,24 @@ class _ProviderProfileState extends State<ProviderProfile> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 20), // Added space from top
+                // divider
+                SizedBox(height: 60),
+
+                // profile pic
                 CircleAvatar(
                   radius: 60,
-                  backgroundColor: Colors.blue, // Change to blue
+                  backgroundColor: Colors.blue,
                   child: Icon(
                     Icons.person,
                     color: Colors.white,
                     size: 80,
                   ),
                 ),
-                SizedBox(height: 20),
+
+                // divider
+                SizedBox(height: 80),
+
+                // name field
                 Text(
                   _user?.name ?? 'NA',
                   style: TextStyle(
@@ -76,6 +83,8 @@ class _ProviderProfileState extends State<ProviderProfile> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+
+                // divider
                 SizedBox(height: 10),
 
                 // email field
@@ -86,13 +95,34 @@ class _ProviderProfileState extends State<ProviderProfile> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                // _buildBoldText('Area:', _user?.area ?? 'NA'),
+
+                // divider
                 SizedBox(height: 10),
-                _buildBoldTextWithStars('Rating:',
-                    rating: rating), // Changed here
+
+                // rating field
+                _buildBoldTextWithStars('Rating:', rating: rating),
+
+                // divider
                 SizedBox(height: 10),
-                // _buildBoldTextWithStars('Recommendations:', first.recommendations),
-                SizedBox(height: 20), // Added space from top
+
+                // total earning
+                Text(
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    "jobs count: ${_user?.serviceCalls.length}"),
+
+                // divider
+                SizedBox(height: 10),
+
+                // total earning
+                Text(
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    "total earning: ${_user?.totalEarning}\$"),
               ],
             ),
           ),
@@ -171,7 +201,7 @@ class _ProviderProfileState extends State<ProviderProfile> {
         Text(
           label,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
