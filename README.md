@@ -12,15 +12,12 @@ HelpApp is an application that allows its users to request assistance with vario
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To get started with HelpApp, simply download the application from the app store and create an account. Choose your user type (service provider or service recipient) and start browsing service listings or posting service requests.
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies Used
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+HelpApp is built using Flutter for cross-platform mobile application development. The backend is powered by a scalable and reliable cloud infrastructure, ensuring smooth performance and reliability.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Feedback and Support
 
 We value your feedback! If you have any suggestions, encounter issues, or need assistance, please don't hesitate to reach out to our support team at support@helpapp.com.
